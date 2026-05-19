@@ -1,7 +1,5 @@
 import axios, { AxiosRequestConfig } from 'axios';
 import { getSession } from 'next-auth/react';
-import { redirect } from 'next/navigation';
-import { auth } from 'server/auth';
 
 const axiosServices = axios.create({ baseURL: process.env.NEXT_PUBLIC_NEXT_APP_API_URL });
 export const axiosLogin = axios.create({ baseURL: process.env.NEXT_APP_API_URL_LOGIN });
@@ -18,11 +16,6 @@ axiosServices.interceptors.request.use(async (config) => {
     if (session?.token?.accessToken) {
       config.headers['Authorization'] = `Bearer ${session.token.accessToken}`;
     }
-  } else {
-    const session = await auth();
-    if (session?.token?.accessToken) {
-      config.headers['Authorization'] = `Bearer ${session.token.accessToken}`;
-    }
   }
   return config;
 });
@@ -33,8 +26,6 @@ axiosServices.interceptors.response.use(
     if (error?.response?.status === 401) {
       if (typeof window !== 'undefined') {
         window.location.href = '/logout';
-      } else {
-        redirect('/logout');
       }
     }
 

@@ -14,10 +14,19 @@ datasource db {
 }
 
 
-model User { 
-  id        Int     @id @default(autoincrement()) 
-  email     String  @unique
-  username  String  @unique
+model User {
+  id        Int    @id @default(autoincrement())
+  email     String @unique
+  username  String @unique
   password  String
   role      String
+}
+
+model Book {
+  id        String   @id @default(uuid())
+  title     String
+  author    String
+  year      Int
+  genre     String
+  createdAt DateTime @default(now())
 } 
