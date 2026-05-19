@@ -6,8 +6,8 @@ import './globals.css';
 import ProviderWrapper from './ProviderWrapper';
 
 export const metadata: Metadata = {
-  title: 'Satu Template | Telkom University',
-  description: 'Satu Template | Telkom University'
+  title: 'DevTeam Project Management | Telkom University',
+  description: 'DevTeam Project Management | Telkom University'
 };
 
 export default function RootLayout({ children }: { children: React.ReactElement }) {

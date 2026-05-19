@@ -19,20 +19,21 @@ async function main() {
   const users = [
     {
       email: 'admin@example.com',
-      fullName: 'Faiz admin',
+      username: 'Faiz admin',
       password: passwordHash,
       role: 'admin'
     },
     {
       email: 'user@example.com',
-      fullName: 'Faiz User',
+      username: 'Faiz User',
       password: passwordHash,
       role: 'user'
     },
   ]
 
   await prisma.user.createMany({
-      data: users
+      data: users,
+      skipDuplicates: true,
     })
   
   console.log('✅ Seeding finished.');

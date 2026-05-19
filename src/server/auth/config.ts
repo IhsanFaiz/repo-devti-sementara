@@ -1,8 +1,10 @@
 import { NextAuthConfig, type DefaultSession } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import { AxiosResponse } from 'axios';
-import { axiosLogin } from 'utils/axios'; // Ensure this path matches
-import endpoints from 'utils/endpoints'; // Ensure this path matches
+import { prisma } from 'lib/prisma';
+import bcrypt from 'bcryptjs'
+// import { AxiosResponse } from 'axios';
+// import { axiosLogin } from 'utils/axios'; // Ensure this path matches
+// import endpoints from 'utils/endpoints'; // Ensure this path matches
 
 /**
  * ---------------------------------------------------------
@@ -39,32 +41,32 @@ declare module 'next-auth/jwt' {
  * HELPER FUNCTIONS
  * ---------------------------------------------------------
  */
-async function authLogin(username: string | undefined, password: string | undefined) {
-  try {
-    const { data }: AxiosResponse = await axiosLogin.post(endpoints.login, {
-      username: username,
-      password: password
-    });
-    return data;
-  } catch (error) {
-    console.error('Error during authLogin:', error);
-    return error; // Return error to be handled in authorize
-  }
-}
+// async function authLogin(username: string | undefined, password: string | undefined) {
+//   try {
+//     const { data }: AxiosResponse = await axiosLogin.post(endpoints.login, {
+//       username: username,
+//       password: password
+//     });
+//     return data;
+//   } catch (error) {
+//     console.error('Error during authLogin:', error);
+//     return error; // Return error to be handled in authorize
+//   }
+// }
 
-async function getProfile(token: string) {
-  try {
-    const { data }: AxiosResponse = await axiosLogin.get(endpoints.profile, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    });
-    return data;
-  } catch (error) {
-    console.error('Error getting profile:', error);
-    return error;
-  }
-}
+// async function getProfile(token: string) {
+//   try {
+//     const { data }: AxiosResponse = await axiosLogin.get(endpoints.profile, {
+//       headers: {
+//         Authorization: `Bearer ${token}`
+//       }
+//     });
+//     return data;
+//   } catch (error) {
+//     console.error('Error getting profile:', error);
+//     return error;
+//   }
+// }
 
 /**
  * ---------------------------------------------------------
@@ -91,33 +93,27 @@ export const authConfig = {
       },
       async authorize(credentials) {
         try {
+
           // Note: In v5, credentials properties are unknown by default, so we cast strings
-          const username = credentials?.username as string | undefined;
-          const password = credentials?.password as string | undefined;
+          const username = credentials?.username as string;
+          const password = credentials?.password as string;
 
-          const tokenResponse: any = await authLogin(username, password);
-          const accessToken = tokenResponse?.token;
+          const user = await prisma.user.findUnique({
+            where: {
+              username
+            }
+          })
 
-          if (!accessToken) {
-            throw new Error(
-              tokenResponse?.response?.data?.message
-                ? tokenResponse?.response?.data?.message
-                : 'Authentication failed: failed retrieve access token.'
-            );
+          const isValid = await bcrypt.compare(password, user?.password as string)
+
+          if(!isValid){
+            throw new Error("Invalid username or password")
           }
 
-          const userResponse: any = await getProfile(accessToken);
-          const userData = userResponse?.data;
-
-          if (!userData) {
-            throw new Error('User profile not found.');
+          return{
+            id: user?.id.toString(),
+            name: user?.username
           }
-
-          // Attach token to the user object so it can be passed to the JWT callback
-          userData['accessToken'] = accessToken;
-
-          // Ensure we return an object that matches the User interface
-          return userData;
         } catch (e: any) {
           const errorMessage = e?.response?.data?.message || e.message || 'Something went wrong!';
           // In v5, throwing an Error in authorize sends the user to the error page with ?error=errorMessage
