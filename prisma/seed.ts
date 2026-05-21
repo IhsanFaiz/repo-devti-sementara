@@ -19,13 +19,13 @@ async function main() {
   const users = [
     {
       email: 'admin@example.com',
-      username: 'Faiz admin',
+      username: 'admin',
       password: passwordHash,
       role: 'admin'
     },
     {
       email: 'user@example.com',
-      username: 'Faiz User',
+      username: 'user',
       password: passwordHash,
       role: 'user'
     },

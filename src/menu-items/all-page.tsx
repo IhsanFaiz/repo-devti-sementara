@@ -2,7 +2,7 @@
 import { FormattedMessage } from 'react-intl';
 
 // ASSETS
-import { DocumentCode2, TableDocument } from 'iconsax-react';
+import { DocumentCode2, TableDocument, Paperclip2 } from 'iconsax-react';
 
 // TYPE
 import { NavItemType } from 'types/menu';
@@ -10,7 +10,8 @@ import { NavItemType } from 'types/menu';
 // ICONS
 const icons = {
   samplePage: DocumentCode2,
-  table: TableDocument
+  table: TableDocument,
+  project: Paperclip2
 };
 
 // ==============================|| MENU ITEMS - SAMPLE PAGE ||============================== //
@@ -33,6 +34,13 @@ const allPages: NavItemType = {
       type: 'item',
       icon: icons.table,
       url: '/table'
+    },
+    {
+      id: 'project',
+      title: <FormattedMessage id="project" />,
+      type: 'item',
+      icon: icons.project,
+      url: '/project'
     }
   ]
 };
