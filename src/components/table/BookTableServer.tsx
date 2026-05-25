@@ -117,7 +117,7 @@ const BookTableServer = () => {
       <MainCard
         title={
           <Stack sx={{ gap: 3 }}>
-            <Typography variant="h5">Book Table (Server Pagination)</Typography>
+            <Typography variant="h5">Project Table (Server Pagination)</Typography>
             <Stack direction="row" alignItems="center" spacing={{ xs: 0.75, sm: 2 }} justifyContent="space-between">
               <Stack spacing={1} direction="row" alignItems="end">
                 <DebouncedInput value="" onFilterChange={(value) => setGlobalFilter(String(value))} placeholder="Search..." syncWithUrl />
@@ -131,7 +131,7 @@ const BookTableServer = () => {
                 }}
                 size="large"
               >
-                Add Book
+                Add Project
               </Button>
             </Stack>
           </Stack>
