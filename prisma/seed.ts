@@ -16,18 +16,32 @@ async function main() {
 
   const passwordHash = await bcrypt.hash(password, 10)
 
+  const role = [
+    {
+      name: "admin"
+    },
+    {
+      name: "user"
+    }
+  ]
+
+  await prisma.role.createMany({
+    data: role,
+    skipDuplicates: true
+  })
+
   const users = [
     {
       email: 'admin@example.com',
       username: 'admin',
       password: passwordHash,
-      role: 'admin'
+      roleId: 1
     },
     {
       email: 'user@example.com',
       username: 'user',
       password: passwordHash,
-      role: 'user'
+      roleId: 2
     },
   ]
 
@@ -35,6 +49,26 @@ async function main() {
       data: users,
       skipDuplicates: true,
     })
+
+    const project = [
+      {
+        name: "Dashboard admin",
+        description: "project dashboard admin manajement sistem",
+        status: "ACTIVE",
+      },
+      {
+        name: "Dashboard user",
+        description: "project dashboard user manajement sistem",
+        status: "ACTIVE",
+      }
+    ]
+
+    await prisma.project.createMany({
+      data: project,
+      skipDuplicates: true
+    })
+
+  
   
   console.log('✅ Seeding finished.');
 }

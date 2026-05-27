@@ -16,6 +16,7 @@ type TableContentProps<TData> = {
   rowSelection?: RowSelectionState;
   isPending?: boolean;
   isServerPagination?: boolean;
+  onRowClick?: (row: Row<TData>) => void;
   expandedComponent?: (props: { row: Row<TData> }) => ReactNode;
 };
 
@@ -24,6 +25,7 @@ export default function TableContent<TData>({
   isPending,
   isServerPagination,
   rowSelection,
+  onRowClick,
   expandedComponent
 }: TableContentProps<TData>) {
   const StyledTableCell = styled(TableCell)(() => ({
@@ -60,7 +62,7 @@ export default function TableContent<TData>({
                 {table.getRowModel().rows.length > 0 ? (
                   table.getRowModel().rows.map((row) => (
                     <Fragment key={row.id}>
-                      <TableRow>
+                      <TableRow key={row.id} hover onClick={() => onRowClick?.(row)} sx={{cursor: onRowClick ? 'pointer' : 'default',}}>
                         {row.getVisibleCells().map((cell) => (
                           <StyledTableCell key={cell.id} {...cell.column.columnDef.meta}>
                             {flexRender(cell.column.columnDef.cell, cell.getContext())}

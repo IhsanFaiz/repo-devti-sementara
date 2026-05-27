@@ -29,13 +29,6 @@ const allPages: NavItemType = {
       url: '/dashboard'
     },
     {
-      id: 'table',
-      title: <FormattedMessage id="table" />,
-      type: 'item',
-      icon: icons.table,
-      url: '/table'
-    },
-    {
       id: 'project',
       title: <FormattedMessage id="project" />,
       type: 'item',

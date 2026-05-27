@@ -13,20 +13,52 @@ datasource db {
   provider = "postgresql"
 }
 
-
-model User {
-  id        Int    @id @default(autoincrement())
-  email     String @unique
-  username  String @unique
-  password  String
-  role      String
+model Role {
+  id    Int    @id @default(autoincrement())
+  name  String
+  users User[]
 }
 
-model Book {
-  id        String   @id @default(uuid())
-  title     String
-  author    String
-  year      Int
-  genre     String
-  createdAt DateTime @default(now())
-} 
+model User {
+  id       Int    @id @default(autoincrement())
+  email    String @unique
+  username String @unique
+  password String
+  roleId   Int    
+
+  role           Role            @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  projectMembers ProjectMember[]
+  projectFiles   ProjectFile[]
+}
+
+model Project {
+  id             Int             @id @default(autoincrement())
+  name           String
+  description    String
+  status         String          @default("ACTIVE")
+  createdAt      DateTime        @default(now())
+  projectMembers ProjectMember[]
+  projectFiles   ProjectFile[]
+}
+
+model ProjectMember {
+  id        Int      @id @default(autoincrement())
+  projectId Int
+  userId    Int
+  joinedAt  DateTime @default(now())
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model ProjectFile {
+  id         Int    @id @default(autoincrement())
+  projectId  Int
+  uploadedBy Int
+  title      String
+  type       String
+  url        String
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [uploadedBy], references: [id], onDelete: Cascade)
+}

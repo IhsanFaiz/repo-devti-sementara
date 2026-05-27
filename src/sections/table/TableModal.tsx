@@ -10,7 +10,12 @@ import {
   InputLabel,
   Stack,
   TextField,
-  Tooltip
+  Tooltip,
+  Select,
+  MenuItem,
+  OutlinedInput,
+  Box,
+  Chip
 } from '@mui/material';
 import _ from 'lodash';
 import * as Yup from 'yup';
@@ -20,7 +25,7 @@ import AlertItemDelete from './AlertItemDelete';
 import Modal from '@mui/material/Modal';
 import MainCard from 'components/MainCard';
 import SimpleBar from 'components/third-party/SimpleBar';
-import { BookApiResponse } from 'components/table/BookTable';
+import { ProjectApiResponse } from 'components/table/ProjectTableServer';
 import { api } from 'trpc/react';
 import { openSnackbar } from 'api/snackbar';
 import { SnackbarProps } from 'types/snackbar';
@@ -28,33 +33,36 @@ import { SnackbarProps } from 'types/snackbar';
 interface Props {
   open: boolean;
   modalToggler: (state: boolean) => void;
-  item?: BookApiResponse | null;
+  item?: ProjectApiResponse | null;
 }
 
 // ==============================|| ITEM ADD / EDIT ||============================== //
 
-function getInitialValues(item: BookApiResponse | null) {
-  const newItem = {
-    title: '',
-    author: '',
-    year: new Date().getFullYear(),
-    genre: ''
+function getInitialValues(item: ProjectApiResponse | null) {
+  return {
+    id: item?.id || 0,
+    name: item?.name || '',
+    description: item?.description || '',
+    status: item?.status || '',
+
+    member: item?.projectMembers?.map((pm) => pm.userId) || [],
+
+    createdAt: item?.createdAt || null
   };
-
-  if (item) {
-    return _.merge({}, newItem, item);
-  }
-
-  return newItem;
 }
 
 export default function TableModal({ open, modalToggler, item }: Props) {
   const ItemSchema = Yup.object().shape({
-    title: Yup.string().required('Title is required'),
-    author: Yup.string().required('Author is required'),
-    year: Yup.number().required('Year is required').integer('Year must be an integer'),
-    genre: Yup.string().required('Genre is required')
+    name: Yup.string().required('Name is required'),
+    description: Yup.string().required('Description is required'),
   });
+
+  const {data: members} = api.user.getAll.useQuery()
+  const projectStatus = [
+    'ACTIVE',
+    'DONE',
+    'CANCELED'
+  ]
 
   const [openAlert, setOpenAlert] = useState(false);
 
@@ -64,13 +72,13 @@ export default function TableModal({ open, modalToggler, item }: Props) {
   };
 
   const utils = api.useUtils();
-  const createBook = api.book.create.useMutation({
+  const createProject = api.project.create.useMutation({
     onSuccess: () => {
-      utils.book.getAll.invalidate();
-      utils.book.getPagination.invalidate();
+      utils.project.getAll.invalidate();
+      utils.project.getPagination.invalidate();
       openSnackbar({
         open: true,
-        message: 'Book created successfully.',
+        message: 'Project created successfully.',
         variant: 'alert',
         alert: {
           color: 'success'
@@ -81,23 +89,23 @@ export default function TableModal({ open, modalToggler, item }: Props) {
     onError: (ctx) => {
       openSnackbar({
         open: true,
-        message: ctx.message || 'Error creating book.',
+        message: ctx.message || 'Error creating project.',
         variant: 'alert',
         alert: {
           color: 'error'
         }
       } as SnackbarProps);
-      console.error('Error creating book:', ctx.message);
+      console.error('Error creating project:', ctx.message);
     }
   });
 
-  const updateBook = api.book.update.useMutation({
+  const updateProject = api.project.update.useMutation({
     onSuccess: () => {
-      utils.book.getAll.invalidate();
-      utils.book.getPagination.invalidate();
+      utils.project.getAll.invalidate();
+      utils.project.getPagination.invalidate();
       openSnackbar({
         open: true,
-        message: 'Book updated successfully.',
+        message: 'Project updated successfully.',
         variant: 'alert',
         alert: {
           color: 'success'
@@ -108,13 +116,13 @@ export default function TableModal({ open, modalToggler, item }: Props) {
     onError: (ctx) => {
       openSnackbar({
         open: true,
-        message: ctx.message || 'Error updating book.',
+        message: ctx.message || 'Error updating project.',
         variant: 'alert',
         alert: {
           color: 'error'
         }
       } as SnackbarProps);
-      console.error('Error updating book:', ctx.message);
+      console.error('Error updating project:', ctx.message);
     }
   });
 
@@ -124,8 +132,8 @@ export default function TableModal({ open, modalToggler, item }: Props) {
     enableReinitialize: true,
     onSubmit: async (values, { setSubmitting }) => {
       try {
-        if (item) await updateBook.mutateAsync({ id: item?.id!, ...values });
-        else await createBook.mutateAsync(values);
+        if (item) await updateProject.mutateAsync({...values, id: item?.id! });
+        else await createProject.mutateAsync(values);
       } catch (error) {
         console.error('Error submitting form:', error);
       } finally {
@@ -154,61 +162,126 @@ export default function TableModal({ open, modalToggler, item }: Props) {
             <SimpleBar sx={{ maxHeight: `calc(100vh - 48px)`, '& .simplebar-content': { display: 'flex', flexDirection: 'column' } }}>
               <FormikProvider value={formik}>
                 <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
-                  <DialogTitle>{item ? 'Edit Book' : 'New Book'}</DialogTitle>
+                  <DialogTitle>{item ? 'Edit Project' : 'New Project'}</DialogTitle>
                   <Divider />
                   <DialogContent sx={{ p: 2.5 }}>
                     <Grid container spacing={3}>
                       <Grid item xs={12}>
                         <Stack spacing={1}>
-                          <InputLabel htmlFor="title">Title</InputLabel>
+                          <InputLabel htmlFor="name">Name</InputLabel>
                           <TextField
                             fullWidth
-                            id="title"
-                            placeholder="Enter Title"
-                            {...getFieldProps('title')}
-                            error={Boolean(touched.title && errors.title)}
-                            helperText={touched.title && errors.title}
+                            id="name"
+                            placeholder="Enter Project Name"
+                            {...getFieldProps('name')}
+                            error={Boolean(touched.name && errors.name)}
+                            helperText={touched.name && errors.name}
                           />
                         </Stack>
                       </Grid>
                       <Grid item xs={12}>
                         <Stack spacing={1}>
-                          <InputLabel htmlFor="author">Author</InputLabel>
+                          <InputLabel htmlFor="description">Description</InputLabel>
                           <TextField
                             fullWidth
-                            id="author"
-                            placeholder="Enter Author"
-                            {...getFieldProps('author')}
-                            error={Boolean(touched.author && errors.author)}
-                            helperText={touched.author && errors.author}
+                            id="description"
+                            placeholder="Enter Description"
+                            {...getFieldProps('description')}
+                            error={Boolean(touched.description && errors.description)}
+                            helperText={touched.description && errors.description}
                           />
                         </Stack>
                       </Grid>
                       <Grid item xs={6}>
                         <Stack spacing={1}>
-                          <InputLabel htmlFor="year">Year</InputLabel>
-                          <TextField
-                            fullWidth
-                            id="year"
-                            type="number"
-                            placeholder="Enter Year"
-                            {...getFieldProps('year')}
-                            error={Boolean(touched.year && errors.year)}
-                            helperText={touched.year && errors.year}
-                          />
+                          <InputLabel id="assign-member" >Assign Member</InputLabel>
+                          <Select
+                            labelId="demo-multiple-chip-label"
+                            id="demo-multiple-chip"
+                            multiple
+                            value={formik.values.member}
+                            onChange={(e) => {
+                              const val = e.target.value as unknown;
+                              if (Array.isArray(val)) {
+                                formik.setFieldValue(
+                                  'member',
+                                  val.map((v) => (typeof v === 'string' ? parseInt(v, 10) : v))
+                                );
+                              } else if (typeof val === 'string') {
+                                // when value comes as comma separated string
+                                formik.setFieldValue(
+                                  'member',
+                                  val.split(',').map((v) => parseInt(v, 10))
+                                );
+                              } else {
+                                formik.setFieldValue('member', []);
+                              }
+                            }}
+                            input={<OutlinedInput id="select-multiple-chip" placeholder="Assign Member" />}
+                            placeholder='Assign Member'
+                            renderValue={(selected) => {
+                              const arr = Array.isArray(selected) ? selected : [];
+                              return arr.length > 0 ? (
+                                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                  {arr.map((value) => {
+                                    const id = typeof value === 'string' ? parseInt(value, 10) : value;
+                                    return (
+                                      <Chip
+                                        key={id}
+                                        label={members?.find((u) => u.id === id)?.username}
+                                        variant="light"
+                                        color="primary"
+                                        size="small"
+                                      />
+                                    );
+                                  })}
+                                </Box>
+                              ) : (
+                                <p style={{ color: '#999' }}>Assign Member</p>
+                              );
+                            }}
+                          >
+                            {members?.map((user) => (
+                              <MenuItem key={user.id} value={user.id}>
+                                {user.username}
+                              </MenuItem>
+                            ))}
+                          </Select>
                         </Stack>
                       </Grid>
                       <Grid item xs={6}>
                         <Stack spacing={1}>
-                          <InputLabel htmlFor="genre">Genre</InputLabel>
-                          <TextField
-                            fullWidth
-                            id="genre"
-                            placeholder="Enter Genre"
-                            {...getFieldProps('genre')}
-                            error={Boolean(touched.genre && errors.genre)}
-                            helperText={touched.genre && errors.genre}
-                          />
+                          <InputLabel id="status" >Status</InputLabel>
+                          <Select
+                            labelId="demo-multiple-chip-label"
+                            id="demo-multiple-chip"
+                            value={formik.values.status}
+                            onChange={(e) => {
+                              formik.setFieldValue('status', e.target.value);
+                            }}
+                            input={<OutlinedInput id="select-multiple-chip" placeholder="Status" />}
+                            placeholder='Status'
+                            renderValue={(selected) =>
+                              selected ? (
+                                <Chip
+                                  label={selected}
+                                  variant="filled"
+                                  color={selected === "ACTIVE" || selected === "DONE" ? "success" : "error"}
+                                  size="small"
+                                />
+                              ) : (
+                                <p style={{ color: '#999', margin: 0 }}>
+                                  Select Status
+                                </p>
+                              )
+                            }
+                          >
+                            {projectStatus.map((status) => (
+                              <MenuItem key={status} value={status}>
+                                {status}
+                              </MenuItem>
+                            ))}
+                          </Select>
                         </Stack>
                       </Grid>
                     </Grid>
@@ -218,7 +291,7 @@ export default function TableModal({ open, modalToggler, item }: Props) {
                     <Grid container justifyContent="space-between" alignItems="center">
                       <Grid item>
                         {item && (
-                          <Tooltip title="Delete Book" placement="top">
+                          <Tooltip title="Delete Project" placement="top">
                             <IconButton onClick={() => setOpenAlert(true)} size="large" color="error">
                               <Trash variant="Bold" />
                             </IconButton>
