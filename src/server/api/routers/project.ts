@@ -82,7 +82,10 @@ export const projectRouter = createTRPCRouter({
   // 4. READ: Get a single project by ID
   getById: protectedProcedure.input(yup.object({ id: yup.number().required() })).query(async ({ ctx, input }) => {
     return ctx.db.project.findUnique({
-      where: { id: input.id }
+      where: { id: input.id },
+      include: {
+        projectMembers: true
+      }
     });
   }),
 

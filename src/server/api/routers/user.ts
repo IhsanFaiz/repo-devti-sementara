@@ -26,6 +26,7 @@ export const userRouter = createTRPCRouter({
   // 2. READ: Get a list of all users
   getAll: protectedProcedure.query(async ({ ctx }) => {
     return ctx.db.user.findMany({
+      include: { role: true },
       orderBy: { id: 'desc' }
     });
   }),
@@ -57,6 +58,7 @@ export const userRouter = createTRPCRouter({
                 ]
               }
             : undefined,
+          include: { role: true },
           orderBy: { id: 'desc' }
         }),
         ctx.db.user.count({
@@ -82,7 +84,8 @@ export const userRouter = createTRPCRouter({
   // 4. READ: Get a single user by ID
   getById: protectedProcedure.input(yup.object({ id: yup.number().required() })).query(async ({ ctx, input }) => {
     return ctx.db.user.findUnique({
-      where: { id: input.id }
+      where: { id: input.id },
+      include: { role: true }
     });
   }),
 
@@ -92,7 +95,7 @@ export const userRouter = createTRPCRouter({
       yup.object({
         id: yup.number().required(),
         email: yup.string().optional(),
-        userusername: yup.string().optional(),
+        username: yup.string().optional(),
         roleId: yup.number().optional()
       })
     )

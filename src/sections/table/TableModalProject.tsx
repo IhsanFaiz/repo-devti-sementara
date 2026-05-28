@@ -21,7 +21,7 @@ import _ from 'lodash';
 import * as Yup from 'yup';
 import { useFormik, Form, FormikProvider } from 'formik';
 import { Trash } from 'iconsax-react';
-import AlertItemDelete from './AlertItemDelete';
+import AlertItemDelete from './AlertItemDeleteProject';
 import Modal from '@mui/material/Modal';
 import MainCard from 'components/MainCard';
 import SimpleBar from 'components/third-party/SimpleBar';
@@ -57,12 +57,21 @@ export default function TableModal({ open, modalToggler, item }: Props) {
     description: Yup.string().required('Description is required'),
   });
 
-  const {data: members} = api.user.getAll.useQuery()
+  const {data: members} = api.user.getAll.useQuery();
+  const { data: projectDetail } = api.project.getById.useQuery(
+    { id: item?.id || 0 },
+    {
+      enabled: Boolean(item?.id)
+    }
+  );
+
+  const editingItem = projectDetail ?? item;
+
   const projectStatus = [
     'ACTIVE',
     'DONE',
     'CANCELED'
-  ]
+  ];
 
   const [openAlert, setOpenAlert] = useState(false);
 
@@ -127,7 +136,7 @@ export default function TableModal({ open, modalToggler, item }: Props) {
   });
 
   const formik = useFormik({
-    initialValues: getInitialValues(item!),
+    initialValues: getInitialValues(editingItem ?? null),
     validationSchema: ItemSchema,
     enableReinitialize: true,
     onSubmit: async (values, { setSubmitting }) => {

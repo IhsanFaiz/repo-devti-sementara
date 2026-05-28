@@ -1,9 +1,9 @@
 'use client';
 
 import { MouseEvent, useState } from 'react';
-import AlertItemDelete from 'sections/table/AlertItemDeleteProject';
-import TableModal from 'sections/table/TableModalProject';
-import { Button, Stack, Typography, Menu, MenuItem, Chip } from '@mui/material';
+import AlertItemDelete from 'sections/table/AlertItemDeleteUsers';
+import TableModal from 'sections/table/TableModalUser';
+import { Button, Stack, Typography, Menu, MenuItem } from '@mui/material';
 import { Tooltip } from '@mui/material';
 import { IconButton } from '@mui/material';
 import { Add, Edit, Trash, More } from 'iconsax-react';
@@ -18,34 +18,22 @@ import { useRouter, useSearchParams } from 'next/navigation';
 
 // ==============================|| Table-Component ||============================== //
 
-export interface ProjectMember {
-  id: number;
-  projectId: number;
-  userId: number;
-  user?: {
-    id: number;
-    username: string;
-  };
-
-  include?: {
-    user: true;
-  };
-}
-
-export interface ProjectApiResponse {
+export interface UserApiResponse {
   id: number
-  name: string;
-  description: string;
-  status: string;
-  createdAt: Date;
-  projectMembers?: ProjectMember[];
+  email: string,
+  username: string;
+  roleId: number
+  role?: {
+    id: number;
+    name: string;
+  }
 }
 
 
-const ProjectTableServer = () => {
+const UserTable = () => {
   const [open, setOpen] = useState<boolean>(false);
   const [ItemModal, setItemModal] = useState<boolean>(false);
-  const [selectedItem, setSelectedItem] = useState<ProjectApiResponse | null>(null);
+  const [selectedItem, setSelectedItem] = useState<UserApiResponse | null>(null);
   const searchParams = useSearchParams();
   const page = searchParams.get('page');
   const limit = searchParams.get('limit');
@@ -53,7 +41,7 @@ const ProjectTableServer = () => {
 
   const handleMenuOpen = (
     event: MouseEvent<HTMLButtonElement>,
-    row: ProjectApiResponse
+    row: UserApiResponse
   ) => {
     event.stopPropagation();
 
@@ -87,8 +75,8 @@ const ProjectTableServer = () => {
     setOpen(true);
     handleMenuClose();
   };
-  const [menuItem, setMenuItem] = useState<ProjectApiResponse | null>(null);
-  const { data: projects, isLoading } = api.project.getPagination.useQuery({
+  const [menuItem, setMenuItem] = useState<UserApiResponse | null>(null);
+  const { data: users, isLoading } = api.user.getPagination.useQuery({
     limit: Number(limit) || 10,
     page: Number(page) || 1,
     search: query || ''
@@ -96,7 +84,7 @@ const ProjectTableServer = () => {
 
   const router = useRouter()
 
-  const columns = useMemo<ColumnDef<ProjectApiResponse>[]>(
+  const columns = useMemo<ColumnDef<UserApiResponse>[]>(
     () => [
       {
         header: () => 'ID',
@@ -104,48 +92,21 @@ const ProjectTableServer = () => {
         sortingFn: 'alphanumeric'
       },
       {
-        header: () => 'Name',
-        accessorKey: 'name',
+        header: () => 'User Name',
+        accessorKey: 'username',
         sortingFn: 'alphanumeric'
       },
       {
-        header: () => 'Description',
-        accessorKey: 'description',
-        sortingFn: 'alphanumeric',
-        cell: ({ row }) => (
-          <Tooltip title={row.original.description}>
-            <div style={{
-              maxWidth: '200px',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap'
-            }}>
-              {row.original.description}
-            </div>
-          </Tooltip>
-        )
+        header: () => 'Email',
+        accessorKey: 'email',
+        sortingFn: 'alphanumeric'
       },
       {
-        header: () => 'Status',
-        accessorKey: 'status',
-        sortingFn: 'alphanumeric',
-        cell: ({row}) => {
-          return (
-            <Chip  label={row.original.status} color={row.original.status === "ACTIVE" ? "success" : row.original.status === "DONE" ? "default" : "error"}></Chip>
-          )
-        }
-      },
-      {
-        header: () => 'Tanggal Dibuat',
-        accessorKey: 'createdAt',
-        sortingFn: 'datetime',
-        cell: ({row}) => {
-          return new Date(row.original.createdAt).toLocaleDateString('id-ID', {
-            day: '2-digit',
-            month: 'long',
-            year: 'numeric'
-          });
-        }
+        id: 'role',
+        header: () => 'Role',
+        accessorFn: (row) => row.role?.name || '',
+        cell: ({ row }) => row.original.role?.name || '',
+        sortingFn: 'alphanumeric'
       },
       {
         id: 'actions',
@@ -172,10 +133,10 @@ const ProjectTableServer = () => {
     []
   );
 
-  const { table, setGlobalFilter } = useTableState<ProjectApiResponse>({
-    data: projects?.data,
+  const { table, setGlobalFilter } = useTableState<UserApiResponse>({
+    data: users?.data,
     columns,
-    totalData: projects?.total,
+    totalData: users?.total,
     isServerPagination: true
   });
 
@@ -205,7 +166,7 @@ const ProjectTableServer = () => {
         }
         content={false}
       >
-        <TableContent<ProjectApiResponse>
+        <TableContent<UserApiResponse>
           {...{
             table,
             isPending: isLoading,
@@ -246,4 +207,4 @@ const ProjectTableServer = () => {
   );
 };
 
-export default ProjectTableServer;
+export default UserTable;

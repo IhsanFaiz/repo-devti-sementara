@@ -4,13 +4,13 @@ import Avatar from 'components/@extended/Avatar';
 import { PopupTransition } from 'components/@extended/Transitions';
 import { ThemeMode } from 'types/config';
 import { Trash } from 'iconsax-react';
-import { BookApiResponse } from 'components/table/BookTable';
+import { UserApiResponse } from 'components/table/UserTable';
 import { openSnackbar } from 'api/snackbar';
 import { SnackbarProps } from 'types/snackbar';
 import { api } from 'trpc/react';
 
 interface Props {
-  item?: BookApiResponse | null;
+  item?: UserApiResponse | null;
   open: boolean;
   handleClose: () => void;
 }
@@ -20,13 +20,13 @@ interface Props {
 export default function AlertItemDelete({ item, open, handleClose }: Props) {
   const theme = useTheme();
   const utils = api.useUtils();
-  const deleteBook = api.book.delete.useMutation({
+  const deleteUser = api.user.delete.useMutation({
     onSuccess: () => {
-      utils.book.getAll.invalidate();
-      utils.book.getPagination.invalidate();
+      utils.user.getAll.invalidate();
+      utils.user.getPagination.invalidate();
       openSnackbar({
         open: true,
-        message: 'Book deleted successfully.',
+        message: 'User deleted successfully.',
         variant: 'alert',
         alert: {
           color: 'success'
@@ -37,19 +37,19 @@ export default function AlertItemDelete({ item, open, handleClose }: Props) {
     onError: (ctx) => {
       openSnackbar({
         open: true,
-        message: ctx.message || 'Error deleting book.',
+        message: ctx.message || 'Error deleting user.',
         variant: 'alert',
         alert: {
           color: 'error'
         }
       } as SnackbarProps);
-      console.error('Error deleting book:', ctx.message);
+      console.error('Error deleting user:', ctx.message);
     }
   });
 
   const deletehandler = async () => {
     try {
-      await deleteBook.mutateAsync({ id: item?.id! });
+      await deleteUser.mutateAsync({ id: item?.id! });
     } catch (error) {
       console.error('Error deleting item:', error);
     }
@@ -86,9 +86,9 @@ export default function AlertItemDelete({ item, open, handleClose }: Props) {
               By deleting
               <Typography variant="subtitle1" component="span">
                 {' '}
-                {item?.title}{' '}
+                {item?.username}{' '}
               </Typography>
-              book, all data associated with that book will also be deleted.
+              project, all data associated with that project will also be deleted.
             </Typography>
           </Stack>
 
@@ -96,8 +96,8 @@ export default function AlertItemDelete({ item, open, handleClose }: Props) {
             <Button fullWidth onClick={handleClose} color="secondary" variant="outlined">
               Cancel
             </Button>
-            <Button fullWidth color="error" variant="contained" onClick={deletehandler} disabled={deleteBook.isPending} autoFocus>
-              {deleteBook.isPending ? 'Deleting...' : 'Delete'}
+            <Button fullWidth color="error" variant="contained" onClick={deletehandler} disabled={deleteUser.isPending} autoFocus>
+              {deleteUser.isPending ? 'Deleting...' : 'Delete'}
             </Button>
           </Stack>
         </Stack>

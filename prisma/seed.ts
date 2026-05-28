@@ -59,7 +59,12 @@ async function main() {
       {
         name: "Dashboard user",
         description: "project dashboard user manajement sistem",
-        status: "ACTIVE",
+        status: "DONE",
+      },
+      {
+        name: "Dashboard manager",
+        description: "project dashboard manager manajement sistem",
+        status: "CANCELED"
       }
     ]
 

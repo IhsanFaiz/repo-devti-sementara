@@ -2,7 +2,7 @@
 import { FormattedMessage } from 'react-intl';
 
 // ASSETS
-import { DocumentCode2, TableDocument, Paperclip2 } from 'iconsax-react';
+import { DocumentCode2, TableDocument, Paperclip2, Profile } from 'iconsax-react';
 
 // TYPE
 import { NavItemType } from 'types/menu';
@@ -11,7 +11,8 @@ import { NavItemType } from 'types/menu';
 const icons = {
   samplePage: DocumentCode2,
   table: TableDocument,
-  project: Paperclip2
+  project: Paperclip2,
+  user: Profile,
 };
 
 // ==============================|| MENU ITEMS - SAMPLE PAGE ||============================== //
@@ -34,7 +35,14 @@ const allPages: NavItemType = {
       type: 'item',
       icon: icons.project,
       url: '/project'
-    }
+    },
+    {
+      id: 'user',
+      title: <FormattedMessage id="user" />,
+      type: 'item',
+      icon: icons.user,
+      url: '/user'
+    },
   ]
 };
 
