@@ -14,7 +14,7 @@ import { useTableState } from 'hooks/useTableState';
 import TableContent from 'components/table/TableContent';
 import { api } from 'trpc/react';
 import { DebouncedInput } from 'components/third-party/react-table';
-import { useRouter, useSearchParams } from 'next/navigation';
+import {  useSearchParams } from 'next/navigation';
 
 // ==============================|| Table-Component ||============================== //
 
@@ -79,10 +79,8 @@ const UserTable = () => {
   const { data: users, isLoading } = api.user.getPagination.useQuery({
     limit: Number(limit) || 10,
     page: Number(page) || 1,
-    search: query || ''
+    search: query || '',
   });
-
-  const router = useRouter()
 
   const columns = useMemo<ColumnDef<UserApiResponse>[]>(
     () => [
@@ -145,7 +143,7 @@ const UserTable = () => {
       <MainCard
         title={
           <Stack sx={{ gap: 3 }}>
-            <Typography variant="h5">Projects (Server Pagination)</Typography>
+            <Typography variant="h5">Users Table</Typography>
             <Stack direction="row" alignItems="center" spacing={{ xs: 0.75, sm: 2 }} justifyContent="space-between">
               <Stack spacing={1} direction="row" alignItems="end">
                 <DebouncedInput value="" onFilterChange={(value) => setGlobalFilter(String(value))} placeholder="Search..." syncWithUrl />
@@ -159,7 +157,7 @@ const UserTable = () => {
                 }}
                 size="large"
               >
-                Add Project
+                Add User
               </Button>
             </Stack>
           </Stack>
@@ -171,9 +169,6 @@ const UserTable = () => {
             table,
             isPending: isLoading,
             isServerPagination: true,
-            onRowClick: (row) => {
-              router.push(`project/detail/${row.original.id}`)
-            }
           }}
         />
         <Menu

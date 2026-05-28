@@ -6,12 +6,8 @@ import { DefaultConfigProps, MenuOrientation, ThemeDirection, ThemeMode } from '
 
 // ==============================|| THEME CONSTANT ||============================== //
 export const roleAccess = {
-  GS: ['*'],
-  TW: ['*'],
-  FD: ['*'],
-  BD: ['*'],
-  SA: ['*']
-  // BD: ['/dashboard', '/api', '/scope'],
+  admin: ['/dashboard', '/project', '/user', '/project/detail'],
+  user: ['/dashboard', '/my-project', '/project/detail']
 };
 export const APP_DEFAULT_PATH = '/dashboard';
 export const HORIZONTAL_MAX_ITEM = 6;

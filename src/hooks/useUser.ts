@@ -3,32 +3,29 @@ import { withBasePath } from 'utils/path';
 
 interface UserProps {
   username: string;
-  fullName: string;
-  photo: string;
   role: string;
-  nim: number;
+  id: string;
+  email: string;
+  photo?: string;
 }
 
 const useUser = () => {
   const { data: session } = useSession();
-  if (session) {
-    const user = session?.token;
-
-    if (!user?.photo) {
-      user!.photo = withBasePath('/assets/images/users/avatar-1.png');
-    }
+  
+  if (session?.user) {
+    const user = session.user;
 
     const newUser: UserProps = {
-      username: user!.user!,
-      fullName: user!.fullname!,
-      photo: user?.photo!,
-      role: user!.role!,
-      nim: user!.numberid!
+      username: user.name || '',
+      role: user.role || '',
+      email: user.email || '',
+      id: user.id || '',
+      photo: user.image || withBasePath('/assets/images/users/avatar-1.png')
     };
 
     return newUser;
   }
-  return false;
+  return null;
 };
 
 export default useUser;

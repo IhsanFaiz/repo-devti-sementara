@@ -65,7 +65,7 @@ const ProfilePage = () => {
         aria-haspopup="true"
         onClick={handleToggle}
       >
-        <Avatar alt="profile user" src={user ? user?.photo : avatar1} />
+        <Avatar alt="profile user" src={user?.photo || avatar1} />
       </ButtonBase>
       <Popper
         placement="bottom-end"
@@ -104,13 +104,13 @@ const ProfilePage = () => {
                   <CardContent sx={{ px: 2.5, pt: 3 }}>
                     <Stack direction="row" spacing={2} sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
                       <Stack direction="row" spacing={1.25} sx={{ alignItems: 'center', maxWidth: '80%' }}>
-                        <Avatar alt="profile user" src={user ? user?.photo : avatar1} />
+                        <Avatar alt="profile user" src={user?.photo || avatar1} />
                         <Stack sx={{ wordWrap: 'break-word', overflowWrap: 'break-word' }}>
                           <Typography variant="subtitle1" lineHeight={1.1}>
-                            {user ? user?.fullName : ''}
+                            {user?.username || 'User'}
                           </Typography>
                           <Typography variant="body2" color="secondary">
-                            {user ? user?.username : ''}
+                            {user?.email || ''}
                           </Typography>
                         </Stack>
                       </Stack>

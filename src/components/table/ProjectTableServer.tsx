@@ -181,10 +181,42 @@ const ProjectTableServer = () => {
 
   return (
     <>
+      <div className='flex flex-col gap-5 lg:grid lg:grid-cols-4 '>
+        <MainCard title="Total Projects" sx={{ height: '100%' }}>
+          <Typography variant="h3">{projects?.total}</Typography>
+          <Typography variant="caption" color="textSecondary">
+            Total Number of Projects
+          </Typography>
+        </MainCard>
+        <div className='bg-emerald-500 rounded-xl pl-1'>
+          <MainCard title="Active Projects" sx={{ height: '100%' }}>
+            <Typography variant="h3">{projects?.statusCounts.ACTIVE}</Typography>
+            <Typography variant="caption" color="textSecondary">
+              Total Active Projects
+            </Typography>
+          </MainCard>
+        </div>
+        <div className='bg-blue-500 rounded-xl pl-1'>
+          <MainCard title="Done Projects" sx={{ height: '100%' }}>
+            <Typography variant="h3">{projects?.statusCounts.DONE}</Typography>
+            <Typography variant="caption" color="textSecondary">
+              Total Done Projects
+            </Typography>
+          </MainCard>
+        </div>
+        <div className='bg-red-500 rounded-xl pl-1'>
+          <MainCard title="Canceled Projects" sx={{ height: '100%' }}>
+            <Typography variant="h3">{projects?.statusCounts.CANCELED}</Typography>
+            <Typography variant="caption" color="textSecondary">
+              Total Canceled Projects
+            </Typography>
+          </MainCard>
+        </div>
+      </div>
       <MainCard
         title={
           <Stack sx={{ gap: 3 }}>
-            <Typography variant="h5">Projects (Server Pagination)</Typography>
+            <Typography variant="h5">Projects Table</Typography>
             <Stack direction="row" alignItems="center" spacing={{ xs: 0.75, sm: 2 }} justifyContent="space-between">
               <Stack spacing={1} direction="row" alignItems="end">
                 <DebouncedInput value="" onFilterChange={(value) => setGlobalFilter(String(value))} placeholder="Search..." syncWithUrl />

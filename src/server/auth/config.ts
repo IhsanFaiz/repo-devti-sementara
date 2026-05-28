@@ -17,6 +17,8 @@ declare module 'next-auth' {
       id: string;
       accessToken?: string;
       provider?: string;
+      role?: string;
+      email?: string;
       // Add other properties if needed
     } & DefaultSession['user'];
   }
@@ -25,6 +27,8 @@ declare module 'next-auth' {
     // Add properties returned from your API
     accessToken?: string;
     id?: string;
+    role?: string;
+    email?: string;
   }
 }
 
@@ -33,6 +37,8 @@ declare module 'next-auth/jwt' {
     accessToken?: string;
     provider?: string;
     id?: string;
+    email?: string;
+    role?: string;
   }
 }
 
@@ -101,6 +107,9 @@ export const authConfig = {
           const user = await prisma.user.findUnique({
             where: {
               username
+            },
+            include: {
+              role: true
             }
           })
 
@@ -112,7 +121,9 @@ export const authConfig = {
 
           return{
             id: user?.id.toString(),
-            name: user?.username
+            name: user?.username,
+            role: user?.role.name,
+            email: user?.email
           }
         } catch (e: any) {
           const errorMessage = e?.response?.data?.message || e.message || 'Something went wrong!';
@@ -137,7 +148,9 @@ export const authConfig = {
           ...session.user,
           id: token.id as string,
           accessToken: token.accessToken as string,
-          provider: token.provider as string
+          provider: token.provider as string,
+          role: token.role as string,
+          email: token.email as string
         };
       }
       return session;

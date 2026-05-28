@@ -12,7 +12,7 @@ const Profile = () => {
   return (
     <Box sx={{ border: 1, borderColor: 'secondary.light', margin: 1, padding: 1, borderRadius: '5%', backgroundColor: 'secondary.200' }}>
       <Stack sx={{ alignItems: 'center', gap: 1 }}>
-        <Avatar alt="profile user" src={user ? user?.photo : avatar1} sx={{ width: 60, height: 60 }} />
+        <Avatar alt="profile user" src={user?.photo || avatar1} sx={{ width: 60, height: 60 }} />
         {drawerOpen && (
           <Stack
             sx={{
@@ -24,9 +24,8 @@ const Profile = () => {
               whiteSpace: 'normal'
             }}
           >
-            <Typography className="font-semibold text-xs">{user ? user?.fullName : ''}</Typography>
-            <Typography className="text-xs"> {user ? user?.nim : ''}</Typography>
-            <Typography className="text-xs"> {user ? user?.role : ''}</Typography>
+            <Typography className="font-semibold text-xs">{user?.username || 'User'}</Typography>
+            <Typography className="text-xs">{user?.email || ''}</Typography>
           </Stack>
         )}
       </Stack>

@@ -11,9 +11,10 @@ import Typography from '@mui/material/Typography';
 // PROJECT IMPORTS
 import NavItem from './NavItem';
 import NavGroup from './NavGroup';
-import menuItem from 'menu-items';
+import menuItem, { getMenuByRole } from 'menu-items';
 
 import useConfig from 'hooks/useConfig';
+import useUser from 'hooks/useUser';
 import { HORIZONTAL_MAX_ITEM } from 'config';
 import { useGetMenuMaster } from 'api/menu';
 
@@ -33,14 +34,19 @@ const Navigation = () => {
   const { menuMaster } = useGetMenuMaster();
   const drawerOpen = menuMaster.isDashboardDrawerOpened;
 
+  const user = useUser();
+  const userRole = user ? user.role : undefined;
+
   const [selectedItems, setSelectedItems] = useState<string | undefined>('');
   const [selectedLevel, setSelectedLevel] = useState<number>(0);
   const [menuItems, setMenuItems] = useState<{ items: NavItemType[] }>({ items: [] });
 
   useLayoutEffect(() => {
-    setMenuItems(menuItem);
+    // Filter menu items based on user role
+    const filteredMenuItems = getMenuByRole(menuItem, userRole);
+    setMenuItems(filteredMenuItems);
     // eslint-disable-next-line
-  }, [menuItem]);
+  }, [userRole]);
 
   const isHorizontal = menuOrientation === MenuOrientation.HORIZONTAL && !downLG;
 

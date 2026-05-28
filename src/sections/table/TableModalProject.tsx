@@ -275,7 +275,7 @@ export default function TableModal({ open, modalToggler, item }: Props) {
                                 <Chip
                                   label={selected}
                                   variant="filled"
-                                  color={selected === "ACTIVE" || selected === "DONE" ? "success" : "error"}
+                                  color={selected === "ACTIVE" ? "success" : selected === "DONE" ? "default" : "error"}
                                   size="small"
                                 />
                               ) : (

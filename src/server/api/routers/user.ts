@@ -27,7 +27,7 @@ export const userRouter = createTRPCRouter({
   getAll: protectedProcedure.query(async ({ ctx }) => {
     return ctx.db.user.findMany({
       include: { role: true },
-      orderBy: { id: 'desc' }
+      orderBy: { id: 'asc' }
     });
   }),
 
@@ -59,7 +59,7 @@ export const userRouter = createTRPCRouter({
               }
             : undefined,
           include: { role: true },
-          orderBy: { id: 'desc' }
+          orderBy: { id: 'asc' }
         }),
         ctx.db.user.count({
           where: input.search

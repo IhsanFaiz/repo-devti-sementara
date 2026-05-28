@@ -43,6 +43,13 @@ const allPages: NavItemType = {
       icon: icons.user,
       url: '/user'
     },
+    {
+      id: 'myProject',
+      title: <FormattedMessage id="my project" />,
+      type: 'item',
+      icon: icons.project,
+      url: '/my-project'
+    }
   ]
 };
 
