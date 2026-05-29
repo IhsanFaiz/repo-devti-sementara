@@ -52,13 +52,13 @@ async function main() {
 
     const project = [
       {
-        name: "Dashboard admin",
-        description: "project dashboard admin manajement sistem",
+        name: "DevTi Guidelines",
+        description: "project DevTi Guidelines employee manajement sistem",
         status: "ACTIVE",
       },
       {
-        name: "Dashboard user",
-        description: "project dashboard user manajement sistem",
+        name: "DevTeam Dashboard",
+        description: "project DevTeam Dashboard project manajement sistem",
         status: "DONE",
       },
       {

@@ -104,7 +104,11 @@ export const projectRouter = createTRPCRouter({
     return ctx.db.project.findUnique({
       where: { id: input.id },
       include: {
-        projectMembers: true
+        projectMembers: {
+          include: {
+            user: true
+          }
+        },
       }
     });
   }),

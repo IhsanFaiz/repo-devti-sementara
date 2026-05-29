@@ -88,6 +88,8 @@ const ProjectTableServer = () => {
     handleMenuClose();
   };
   const [menuItem, setMenuItem] = useState<ProjectApiResponse | null>(null);
+
+  
   const { data: projects, isLoading } = api.project.getPagination.useQuery({
     limit: Number(limit) || 10,
     page: Number(page) || 1,
