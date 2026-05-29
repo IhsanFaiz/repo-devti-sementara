@@ -7,16 +7,52 @@ import { ArrowLeft, BadgeQuestionMark, CircleCheck, PlusCircle } from "lucide-re
 import Link from "next/link";
 import MainCard from "components/MainCard";
 import { Chip, Skeleton, Button } from "@mui/material";
+import { useState } from "react";
+import TableModal from "sections/table/TableModalField";
+import ProjectFieldValue from "components/ProjectFieldValue";
+import AlertItemDelete from "sections/table/AlertItemDeleteField";
 
+
+export interface ProjectFieldApiResponse {
+  id: number;
+  projectId: number;
+  label: string;
+  type: string;
+  required: boolean;
+  placeholder: string | null;
+  createdAt: Date;
+}
 
 export function DetailView(){
 
+    const [fieldModal, setFieldModal] = useState(false);
+    const [selectedField, setSelectedField] = useState<ProjectFieldApiResponse | null>(null);
+    const [deleteModal, setDeleteModal] = useState(false);
     const params = useParams()
     const projectId = params.id
 
     const { data: project, isLoading } = api.project.getById.useQuery({
         id: Number(projectId)
     });
+
+    const {data: projectField } = api.projectField.getByProjectId.useQuery({
+        projectId: Number(projectId)
+    })
+
+    const handleEdit = (
+        field: ProjectFieldApiResponse
+        ) => {
+        setSelectedField(field);
+        setFieldModal(true);
+        };
+
+    const handleDelete = (
+        field: ProjectFieldApiResponse
+    ) => {
+        setSelectedField(field);
+        setDeleteModal(true);
+    };
+
 
     return(
         <>
@@ -101,15 +137,59 @@ export function DetailView(){
                     <MainCard>
                         <div className="flex items-center justify-between">
                             <Typography variant="h4" className="flex items-center gap-2">
-                                All Project Input
+                                All Project Field
                             </Typography>
-                            <Button variant="contained" color="success" className="flex items-center gap-2">
+                            <Button onClick={() => {setSelectedField(null); setFieldModal(true);}} variant="contained" color="primary" className="flex items-center gap-2">
                                 <PlusCircle />
                                 Add field
                             </Button>
                         </div>
                         <div className="mt-5">
-                            
+                            {isLoading ? (
+                                <div className="flex flex-col gap-4">
+                                    {[1, 2, 3].map((item) => (
+                                        <div
+                                            key={item}
+                                            className="border rounded-lg p-4 flex flex-col gap-2"
+                                        >
+                                            <Skeleton variant="text" width={200} height={32} />
+                                            <Skeleton variant="text" width="100%" />
+                                            <Skeleton variant="rounded" width="100%" height={80} />
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : !projectField?.length ? (
+                                <div className="border border-dashed rounded-lg p-10 text-center">
+                                    <Typography variant="h5" color="textSecondary">
+                                        No fields created yet
+                                    </Typography>
+
+                                    <Typography
+                                        variant="body2"
+                                        color="textSecondary"
+                                        className="mt-2"
+                                    >
+                                        Add your first project field to start collecting submissions.
+                                    </Typography>
+                                </div>
+                            ) : (
+                                <div className="flex flex-col gap-4">
+                                    {projectField.map((field) => {
+                                        const value = field.values?.[0];
+
+                                        return (
+                                            <ProjectFieldValue
+                                                key={field.id}
+                                                field={field}
+                                                value={value?.value ?? null}
+                                                fileUrl={value?.file?.url ?? null}
+                                                onDelete={handleDelete}
+                                                onEdit={handleEdit}
+                                            />
+                                        );
+                                    })}
+                                </div>
+                            )}
                         </div>
                     </MainCard>
                 </div>
@@ -140,6 +220,8 @@ export function DetailView(){
                     </MainCard>
                 </div>
             </div>
+            <AlertItemDelete item={selectedField} open={deleteModal} handleClose={() => setDeleteModal(false)} />
+            <TableModal open={fieldModal} modalToggler={setFieldModal} item={selectedField} projectId={Number(projectId)} />
         </>
     )
 }

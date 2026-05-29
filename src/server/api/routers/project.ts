@@ -11,7 +11,8 @@ export const projectRouter = createTRPCRouter({
       yup.object({
         name: yup.string().min(1).required(),
         description: yup.string().required(),
-        status: yup.string().required()
+        status: yup.string().required(),
+        member: yup.array().of(yup.number()).default([])
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -19,7 +20,18 @@ export const projectRouter = createTRPCRouter({
         data: {
           name: input.name,
           description: input.description,
-          status: input.status
+          status: input.status,
+          
+          projectMembers: {
+            create:
+              input.member?.map((userId) => ({
+                user: {
+                  connect: {
+                    id: userId
+                  }
+                }
+              })) ?? []
+          }
         }
       });
     }),
@@ -60,7 +72,7 @@ export const projectRouter = createTRPCRouter({
         skip,
         take: limit,
         where,
-        orderBy: { createdAt: 'asc' }
+        orderBy: { status: 'asc' }
       }),
 
       ctx.db.project.count({
