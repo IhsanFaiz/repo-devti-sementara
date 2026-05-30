@@ -2,6 +2,7 @@ import { projectRouter } from './routers/project';
 import { userRouter } from './routers/user';
 import { roleRouter } from './routers/role';
 import { projectFieldRouter } from './routers/projectField';
+import { projectFieldValueRouter } from './routers/projectFieldValue';
 import { createCallerFactory, createTRPCRouter } from './trpc';
 
 /**
@@ -10,6 +11,7 @@ import { createCallerFactory, createTRPCRouter } from './trpc';
  * All routers added in /api/routers should be manually added here.
  */
 export const appRouter = createTRPCRouter({
+  projectFieldValue: projectFieldValueRouter,
   projectField: projectFieldRouter,
   project: projectRouter,
   user: userRouter

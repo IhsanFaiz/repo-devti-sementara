@@ -150,7 +150,7 @@ export function DetailView(){
                                     {[1, 2, 3].map((item) => (
                                         <div
                                             key={item}
-                                            className="border rounded-lg p-4 flex flex-col gap-2"
+                                            className="border border-gray-700 rounded-lg p-4 flex flex-col gap-2"
                                         >
                                             <Skeleton variant="text" width={200} height={32} />
                                             <Skeleton variant="text" width="100%" />
@@ -159,7 +159,7 @@ export function DetailView(){
                                     ))}
                                 </div>
                             ) : !projectField?.length ? (
-                                <div className="border border-dashed rounded-lg p-10 text-center">
+                                <div className="border border-dashed border-gray-700 rounded-lg p-10 text-center">
                                     <Typography variant="h5" color="textSecondary">
                                         No fields created yet
                                     </Typography>

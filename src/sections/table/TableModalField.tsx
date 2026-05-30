@@ -24,7 +24,7 @@ import { SnackbarProps } from 'types/snackbar';
 
 import MainCard from 'components/MainCard';
 import SimpleBar from 'components/third-party/SimpleBar';
-import { ProjectFieldApiResponse } from 'views/other/project/detail/detail';
+import { ProjectFieldApiResponse } from 'views/other/project/detail/admin/detail';
 
 import { api } from 'trpc/react';
 

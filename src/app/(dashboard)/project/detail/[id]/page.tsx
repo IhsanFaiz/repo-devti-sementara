@@ -1,5 +1,5 @@
 import { Stack } from '@mui/material';
-import { DetailView } from 'views/other/project/detail/detail';
+import { DetailView } from 'views/other/project/detail/admin/detail';
 
 const Page = () => {
   return (
