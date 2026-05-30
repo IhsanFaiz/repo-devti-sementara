@@ -4,6 +4,9 @@ import { Typography, Chip, Button } from '@mui/material';
 import MainCard from 'components/MainCard';
 import Image from 'next/image';
 import { Edit, Trash } from 'iconsax-react';
+import { useState } from 'react';
+import { XCircle } from 'lucide-react';
+
 
 interface ProjectField {
   id: number;
@@ -35,6 +38,8 @@ export default function ProjectFieldValue({
   const isEmpty =
     (!value || value.trim() === '') &&
     (!fileUrl || fileUrl.trim() === '');
+  
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
 
   const renderContent = () => {
     if (isEmpty) {
@@ -75,9 +80,10 @@ export default function ProjectFieldValue({
             <Image
               src={fileUrl!}
               alt={field.label}
-              width={600}
-              height={400}
-              className="rounded-lg object-cover"
+              width={200}
+              height={100}
+              className="rounded-lg object-cover border border-gray-700 cursor-pointer hover:border-red-400"
+              onClick={() => setPreviewImage(fileUrl!)}
             />
           </div>
         );
@@ -114,7 +120,8 @@ export default function ProjectFieldValue({
   };
 
   return (
-    <MainCard>
+    <>
+      <MainCard>
       <div className="flex justify-between items-start mb-4">
         <div>
           <Typography variant="h5">
@@ -172,5 +179,32 @@ export default function ProjectFieldValue({
         </div>
       </div>
     </MainCard>
+    {previewImage && (
+      <div
+        className="fixed inset-0 bg-black/80 flex items-center justify-center z-50"
+        onClick={() => setPreviewImage(null)}
+      >
+        <div
+          className="relative max-w-6xl max-h-[90vh] p-4"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <button
+            className="absolute top-2 right-2 text-white text-2xl"
+            onClick={() => setPreviewImage(null)}
+          >
+            <XCircle className='bg-red-500 text-white rounded-full flex justify-center items-center'/>
+          </button>
+
+          <Image
+            src={previewImage}
+            alt="Preview"
+            width={3000}
+            height={2800}
+            className="max-h-[85vh] w-auto object-contain rounded-lg"
+          />
+        </div>  
+      </div>
+    )}
+    </>
   );
 }

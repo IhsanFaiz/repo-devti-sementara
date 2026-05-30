@@ -89,47 +89,47 @@ export function DetailView(){
                     ) : (
                     <MainCard>
                         <div className="flex flex-col gap-5">
-                        <div>
-                            <div className="flex items-center justify-between">
-                            <Typography variant="h3">
-                                {project?.name}
-                            </Typography>
+                            <div>
+                                <div className="flex items-center justify-between">
+                                <Typography variant="h3">
+                                    {project?.name}
+                                </Typography>
 
-                            <Chip
-                                label={project?.status}
-                                color={
-                                project?.status === "ACTIVE"
-                                    ? "success"
-                                    : project?.status === "DONE"
-                                    ? "default"
-                                    : "error"
-                                }
-                            />
+                                <Chip
+                                    label={project?.status}
+                                    color={
+                                    project?.status === "ACTIVE"
+                                        ? "success"
+                                        : project?.status === "DONE"
+                                        ? "default"
+                                        : "error"
+                                    }
+                                />
+                                </div>
+
+                                <Typography variant="h6" color="textSecondary">
+                                    {project?.description}
+                                </Typography>
                             </div>
 
-                            <Typography variant="h6" color="textSecondary">
-                                {project?.description}
-                            </Typography>
-                        </div>
-
-                        <div>
-                            <div className="flex gap-2 mt-2">
-                            {project?.projectMembers.length ? (
-                                project.projectMembers.map((member) => (
-                                <Chip
-                                    key={member.userId}
-                                    label={member.user.username}
-                                    color="primary"
-                                />
-                                ))
-                            ) : (
-                                <Chip
-                                label="No members assigned to this project"
-                                color="default"
-                                />
-                            )}
+                            <div>
+                                <div className="flex gap-2 mt-2">
+                                {project?.projectMembers.length ? (
+                                    project.projectMembers.map((member) => (
+                                    <Chip
+                                        key={member.userId}
+                                        label={member.user.username}
+                                        color="primary"
+                                    />
+                                    ))
+                                ) : (
+                                    <Chip
+                                    label="No members assigned to this project"
+                                    color="default"
+                                    />
+                                )}
+                                </div>
                             </div>
-                        </div>
                         </div>
                     </MainCard>
                     )}
@@ -176,13 +176,13 @@ export function DetailView(){
                                 <div className="flex flex-col gap-4">
                                     {projectField.map((field) => {
                                         const value = field.values?.[0];
-
+                                        console.log(value)
                                         return (
                                             <ProjectFieldValue
                                                 key={field.id}
                                                 field={field}
                                                 value={value?.value ?? null}
-                                                fileUrl={value?.file?.url ?? null}
+                                                fileUrl={value?.value ?? null}
                                                 onDelete={handleDelete}
                                                 onEdit={handleEdit}
                                             />
