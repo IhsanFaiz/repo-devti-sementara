@@ -56,7 +56,7 @@ async function main() {
       roleId: 3
     },
     {
-      email: 'user employee',
+      email: 'user employee@example.com',
       username: 'user employee',
       password: passwordHash,
       roleId: 4
