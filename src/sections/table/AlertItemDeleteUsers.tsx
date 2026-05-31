@@ -88,7 +88,7 @@ export default function AlertItemDelete({ item, open, handleClose }: Props) {
                 {' '}
                 {item?.username}{' '}
               </Typography>
-              project, all data associated with that project will also be deleted.
+              user, all data associated with that user will also be deleted.
             </Typography>
           </Stack>
 

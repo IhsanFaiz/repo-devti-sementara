@@ -22,6 +22,12 @@ async function main() {
     },
     {
       name: "user"
+    },
+    {
+      name:"admin employee"
+    },
+    {
+      name:"user employee"
     }
   ]
 
@@ -43,6 +49,18 @@ async function main() {
       password: passwordHash,
       roleId: 2
     },
+    {
+      email: 'admin employee@example.com',
+      username: 'admin employee',
+      password: passwordHash,
+      roleId: 3
+    },
+    {
+      email: 'user employee',
+      username: 'user employee',
+      password: passwordHash,
+      roleId: 4
+    }
   ]
 
   await prisma.user.createMany({

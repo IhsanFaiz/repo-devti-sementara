@@ -4,7 +4,9 @@ import { getToken } from 'next-auth/jwt';
 // RBAC configuration
 const roleAccess: Record<string, string[]> = {
   admin: ['/dashboard', '/project', '/user', '/project/detail'],
-  user: ['/dashboard', '/my-project', '/project/detail']
+  user: ['/dashboard', '/my-project', '/project/detail'],
+  'admin employee': ['/dashboard', '/employee', '/team', '/applicant', '/selection', '/onboarding',],
+  'user employee': ['/dashboard', '/task-list', '/team'],
 };
 
 export async function middleware(req: NextRequest) {
