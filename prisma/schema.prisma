@@ -30,17 +30,21 @@ model User {
   projectMembers       ProjectMember[]
   projectFiles         ProjectFile[]
   submittedFieldValues ProjectFieldValue[]
+  employees            Employee[]
 }
 
 model Project {
-  id             Int             @id @default(autoincrement())
-  name           String
-  description    String
-  status         String          @default("ACTIVE")
-  createdAt      DateTime        @default(now())
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String
+  status      String   @default("ACTIVE")
+  createdAt   DateTime @default(now())
+
   projectMembers ProjectMember[]
   projectFiles   ProjectFile[]
   projectFields  ProjectField[]
+  teamProjects   TeamProject[]
+  taskLists      TaskList[]
 }
 
 model ProjectMember {
@@ -97,4 +101,136 @@ model ProjectFieldValue {
   file ProjectFile? @relation(fields: [fileId], references: [id])
 
   user User? @relation(fields: [submittedBy], references: [id])
+}
+
+// ==============================|| SCHEMA DATABASE - DEVTI GUIDELINES ||============================== //
+
+model Employee {
+  id               Int      @id @default(autoincrement())
+  userId           Int
+  applicantId      Int
+  jobDeskId        Int
+  firstName        String
+  lastName         String
+  startWorking     DateTime
+  status           String
+  previousPosition String?
+  currentPosition  String?
+
+  user              User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  applicant         Applicant           @relation(fields: [applicantId], references: [id], onDelete: Cascade)
+  jobDesk           JobDesk             @relation(fields: [jobDeskId], references: [id], onDelete: Cascade)
+  onboardingProgres OnboardingProgres[]
+  taskLists         TaskList[]
+}
+
+model Applicant {
+  id                  Int      @id @default(autoincrement())
+  jobOpeningId        Int
+  firstName           String
+  lastName            String
+  placeOfBirth        String
+  dateOfBirth         DateTime
+  domicile            String
+  phoneNumber         String
+  email               String
+  administration      String?
+  writtenTest         String?
+  interview           String?
+  miniProject         String?
+  administrationScore Int?
+  writtenTestScore    Int?
+  interviewScore      Int?
+  miniProjectScore    Int?
+  result              String?
+
+  jobOpening         JobOpening          @relation(fields: [jobOpeningId], references: [id], onDelete: Cascade)
+  employees          Employee[]
+  applicantDocuments ApplicantDocument[]
+}
+
+model JobDesk {
+  id            Int            @id @default(autoincrement())
+  jobDeskName   String
+  description   String?
+  employees     Employee[]
+  jobDeskModuls JobDeskModul[]
+}
+
+model JobOpening {
+  id               Int         @id @default(autoincrement())
+  userId           Int
+  jobOpeningPeriod String
+  applicants       Applicant[]
+}
+
+model JobDeskModul {
+  id        Int @id @default(autoincrement())
+  jobDeskId Int
+  modulId   Int
+
+  jobDesk JobDesk         @relation(fields: [jobDeskId], references: [id], onDelete: Cascade)
+  modul   ModulOnboarding @relation(fields: [modulId], references: [id], onDelete: Cascade)
+}
+
+model ModulOnboarding {
+  id                Int                 @id @default(autoincrement())
+  modulName         String
+  groupChecklist    String
+  listChecklist     String
+  sourceInformation String?
+  jobDeskModuls     JobDeskModul[]
+  onboardingProgres OnboardingProgres[]
+}
+
+model Team {
+  id           Int           @id @default(autoincrement())
+  teamName     String
+  teamProjects TeamProject[]
+}
+
+model TeamProject {
+  id        Int @id @default(autoincrement())
+  teamId    Int
+  projectId Int
+
+  team    Team    @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model OnboardingProgres {
+  id         Int    @id @default(autoincrement())
+  employeeId Int
+  modulId    Int
+  status     String @default("PENDING")
+
+  employee Employee        @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  modul    ModulOnboarding @relation(fields: [modulId], references: [id], onDelete: Cascade)
+}
+
+model TaskList {
+  id         Int    @id @default(autoincrement())
+  projectId  Int
+  employeeId Int
+  taskName   String
+  taskStatus String @default("To Do")
+
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  project  Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model Document {
+  id                 Int                 @id @default(autoincrement())
+  documentType       String
+  path               String
+  applicantDocuments ApplicantDocument[]
+}
+
+model ApplicantDocument {
+  id          Int @id @default(autoincrement())
+  applicantId Int
+  documentId  Int
+
+  applicant Applicant @relation(fields: [applicantId], references: [id], onDelete: Cascade)
+  document  Document  @relation(fields: [documentId], references: [id], onDelete: Cascade)
 }
