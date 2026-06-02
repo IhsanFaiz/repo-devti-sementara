@@ -33,18 +33,44 @@ model User {
   employees            Employee[]
 }
 
+model Request {
+  id              Int      @id @default(autoincrement())
+  references      String
+  via             String?
+  psal            String?
+  department      String?
+  category        String?
+  applicationName String?
+  framework       String?
+  version         String?
+  description     String?
+  status          String   @default("PENDING")
+  groupType       String?
+  serviceType     String?
+  subServiceType  String?
+  priority        String?
+  slaDays         Int?
+  submittedAt     DateTime @default(now())
+  projectId       Int?     @unique
+
+  project Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
 model Project {
-  id          Int      @id @default(autoincrement())
+  id          Int       @id @default(autoincrement())
   name        String
   description String
-  status      String   @default("ACTIVE")
-  createdAt   DateTime @default(now())
+  status      String    @default("ACTIVE")
+  createdAt   DateTime  @default(now())
+  dueDate     DateTime?
+  completedAt DateTime?
 
   projectMembers ProjectMember[]
   projectFiles   ProjectFile[]
   projectFields  ProjectField[]
   teamProjects   TeamProject[]
   taskLists      TaskList[]
+  request        Request?
 }
 
 model ProjectMember {
@@ -107,9 +133,9 @@ model ProjectFieldValue {
 
 model Employee {
   id               Int      @id @default(autoincrement())
-  userId           Int
-  applicantId      Int
-  jobDeskId        Int
+  userId           Int?
+  applicantId      Int?
+  jobDeskId        Int?
   firstName        String
   lastName         String
   startWorking     DateTime
@@ -117,16 +143,16 @@ model Employee {
   previousPosition String?
   currentPosition  String?
 
-  user              User                @relation(fields: [userId], references: [id], onDelete: Cascade)
-  applicant         Applicant           @relation(fields: [applicantId], references: [id], onDelete: Cascade)
-  jobDesk           JobDesk             @relation(fields: [jobDeskId], references: [id], onDelete: Cascade)
+  user              User?               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  applicant         Applicant?          @relation(fields: [applicantId], references: [id], onDelete: Cascade)
+  jobDesk           JobDesk?            @relation(fields: [jobDeskId], references: [id], onDelete: Cascade)
   onboardingProgres OnboardingProgres[]
   taskLists         TaskList[]
 }
 
 model Applicant {
   id                  Int      @id @default(autoincrement())
-  jobOpeningId        Int
+  jobOpeningId        Int?
   firstName           String
   lastName            String
   placeOfBirth        String
@@ -144,79 +170,83 @@ model Applicant {
   miniProjectScore    Int?
   result              String?
 
-  jobOpening         JobOpening          @relation(fields: [jobOpeningId], references: [id], onDelete: Cascade)
+  jobOpening         JobOpening?         @relation(fields: [jobOpeningId], references: [id], onDelete: Cascade)
   employees          Employee[]
   applicantDocuments ApplicantDocument[]
 }
 
 model JobDesk {
-  id            Int            @id @default(autoincrement())
-  jobDeskName   String
-  description   String?
+  id          Int     @id @default(autoincrement())
+  jobDeskName String
+  description String?
+
   employees     Employee[]
   jobDeskModuls JobDeskModul[]
 }
 
 model JobOpening {
-  id               Int         @id @default(autoincrement())
+  id               Int    @id @default(autoincrement())
   userId           Int
   jobOpeningPeriod String
-  applicants       Applicant[]
+
+  applicants Applicant[]
 }
 
 model JobDeskModul {
-  id        Int @id @default(autoincrement())
-  jobDeskId Int
-  modulId   Int
+  id        Int  @id @default(autoincrement())
+  jobDeskId Int?
+  modulId   Int?
 
-  jobDesk JobDesk         @relation(fields: [jobDeskId], references: [id], onDelete: Cascade)
-  modul   ModulOnboarding @relation(fields: [modulId], references: [id], onDelete: Cascade)
+  jobDesk JobDesk?         @relation(fields: [jobDeskId], references: [id], onDelete: Cascade)
+  modul   ModulOnboarding? @relation(fields: [modulId], references: [id], onDelete: Cascade)
 }
 
 model ModulOnboarding {
-  id                Int                 @id @default(autoincrement())
+  id                Int     @id @default(autoincrement())
   modulName         String
   groupChecklist    String
   listChecklist     String
   sourceInformation String?
+
   jobDeskModuls     JobDeskModul[]
   onboardingProgres OnboardingProgres[]
 }
 
 model Team {
-  id           Int           @id @default(autoincrement())
-  teamName     String
+  id       Int    @id @default(autoincrement())
+  teamName String
+
   teamProjects TeamProject[]
 }
 
 model TeamProject {
-  id        Int @id @default(autoincrement())
-  teamId    Int
-  projectId Int
+  id        Int  @id @default(autoincrement())
+  teamId    Int?
+  projectId Int?
 
-  team    Team    @relation(fields: [teamId], references: [id], onDelete: Cascade)
-  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  team    Team?    @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  project Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
 }
 
 model OnboardingProgres {
   id         Int    @id @default(autoincrement())
-  employeeId Int
-  modulId    Int
+  employeeId Int?
+  modulId    Int?
   status     String @default("PENDING")
 
-  employee Employee        @relation(fields: [employeeId], references: [id], onDelete: Cascade)
-  modul    ModulOnboarding @relation(fields: [modulId], references: [id], onDelete: Cascade)
+  employee Employee?        @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  modul    ModulOnboarding? @relation(fields: [modulId], references: [id], onDelete: Cascade)
 }
 
 model TaskList {
   id         Int    @id @default(autoincrement())
-  projectId  Int
-  employeeId Int
+  projectId  Int?
+  employeeId Int?
   taskName   String
   taskStatus String @default("To Do")
 
-  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
-  project  Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  employee Employee? @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  project  Project?  @relation(fields: [projectId], references: [id], onDelete: Cascade)
 }
 
 model Document {
