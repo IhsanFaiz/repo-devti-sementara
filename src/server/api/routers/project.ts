@@ -99,8 +99,6 @@ export const projectRouter = createTRPCRouter({
         item._count.status;
     });
 
-    console.log(statusCounts)
-
     return {
       data: projects,
       total,

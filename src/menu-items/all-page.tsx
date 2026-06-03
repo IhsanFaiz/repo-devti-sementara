@@ -3,7 +3,7 @@ import { FormattedMessage } from 'react-intl';
 
 // ASSETS
 import { DocumentCode2, TableDocument, Paperclip2, Profile, } from 'iconsax-react';
-import { Users2, Compass, FileText, BriefcaseBusiness, ClipboardListIcon } from 'lucide-react';
+import { Users2, Compass, FileText, BriefcaseBusiness, ClipboardListIcon, FileChartColumnIcon } from 'lucide-react';
 
 // TYPE
 import { NavItemType } from 'types/menu';
@@ -18,7 +18,8 @@ const icons = {
   onboarding: Compass,
   applicant: FileText,
   selection: ClipboardListIcon,
-  team: BriefcaseBusiness
+  team: BriefcaseBusiness,
+  request: FileChartColumnIcon
 };
 
 // ==============================|| MENU ITEMS - SAMPLE PAGE ||============================== //
@@ -37,6 +38,13 @@ const allPages: NavItemType = {
       type: 'item',
       icon: icons.samplePage,
       url: '/dashboard'
+    },
+    {
+      id: 'request',
+      title: <FormattedMessage id="App Request" />,
+      type: 'item',
+      icon: icons.request,
+      url: '/request'
     },
     {
       id: 'project',

@@ -160,7 +160,7 @@ export default function TableModal({ open, modalToggler, item }: Props) {
             <SimpleBar sx={{ maxHeight: `calc(100vh - 48px)`, '& .simplebar-content': { display: 'flex', flexDirection: 'column' } }}>
               <FormikProvider value={formik}>
                 <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
-                  <DialogTitle>{item ? 'Edit Project' : 'New Project'}</DialogTitle>
+                  <DialogTitle>{item ? 'Edit User' : 'New User'}</DialogTitle>
                   <Divider />
                   <DialogContent sx={{ p: 2.5 }}>
                     <Grid container spacing={3}>
