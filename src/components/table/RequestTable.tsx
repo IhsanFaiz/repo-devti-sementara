@@ -1,7 +1,7 @@
 'use client';
 
 import { MouseEvent, useState } from 'react';
-import AlertItemDelete from 'sections/table/AlertItemDeleteProject';
+import AlertItemDelete from 'sections/table/AlertItemDeleteRequest';
 import TableModal from 'sections/table/TableModalRequest';
 import { Button, Stack, Typography, Menu, MenuItem, Chip } from '@mui/material';
 import { Tooltip } from '@mui/material';
@@ -303,7 +303,7 @@ const RequestTableServer = () => {
             isPending: isLoading,
             isServerPagination: true,
             onRowClick: (row) => {
-              router.push(`project/detail/${row.original.id}`)
+              router.push(`request/detail/${row.original.id}`)
             }
           }}
         />
@@ -332,7 +332,7 @@ const RequestTableServer = () => {
         </Menu>
 
       </MainCard>
-      {/* <AlertItemDelete item={selectedItem} open={open} handleClose={() => setOpen(false)} /> */}
+      <AlertItemDelete item={selectedItem} open={open} handleClose={() => setOpen(false)} />
       <TableModal open={ItemModal} modalToggler={setItemModal} item={selectedItem} />
     </>
   );

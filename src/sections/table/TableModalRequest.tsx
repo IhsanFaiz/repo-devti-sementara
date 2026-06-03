@@ -21,7 +21,7 @@ import _ from 'lodash';
 import * as Yup from 'yup';
 import { useFormik, Form, FormikProvider } from 'formik';
 import { Trash } from 'iconsax-react';
-import AlertItemDelete from './AlertItemDeleteProject';
+import AlertItemDelete from './AlertItemDeleteRequest';
 import Modal from '@mui/material/Modal';
 import MainCard from 'components/MainCard';
 import SimpleBar from 'components/third-party/SimpleBar';
@@ -40,7 +40,7 @@ interface Props {
 
 function getInitialValues(item: RequestApiResponse | null) {
   return {
-    id: item?.id || 0,
+    id: item?.id,
     references: item?.references || '',
     applicationName: item?.applicationName || '',
     status: item?.status || 'PENDING',
@@ -52,8 +52,8 @@ function getInitialValues(item: RequestApiResponse | null) {
     category        :item?.category || 'Akademik',
     framework       :item?.framework || 'SATU',
     groupType       :item?.groupType || 'Application',
-    serviceType     :item?.serviceType || '',
-    subServiceType  :item?.subServiceType || '',
+    serviceType     :item?.serviceType || 'RFC_Change_App',
+    subServiceType  :item?.subServiceType || 'Perubahan aplikasi minor',
     priority        :item?.priority || 'MEDIUM',
     slaDays         :item?.slaDays || 0,
   };
@@ -69,6 +69,18 @@ export default function TableModal({ open, modalToggler, item }: Props) {
     'APPROVED',
     'PENDING',
     'REJECTED'
+  ];
+
+  const requestServiceType = [
+    'RFC_Change_App',
+    'Permintaan_New_API_or_Major',
+  ];
+
+  const requestSubServiceType = [
+    'Perubahan aplikasi minor',
+    'Pengembangan aplikasi besar',
+    'Pengembangan API kecil',
+    'Pengembangan API sedang'
   ];
 
   const requestPriority = [
@@ -434,28 +446,72 @@ export default function TableModal({ open, modalToggler, item }: Props) {
                       </Grid>
                       <Grid item xs={6}>
                         <Stack spacing={1}>
-                          <InputLabel htmlFor="serviceType">Service Type</InputLabel>
-                          <TextField
-                            fullWidth
-                            id="serviceType"
-                            placeholder="Enter Service Type"
-                            {...getFieldProps('serviceType')}
-                            error={Boolean(touched.serviceType && errors.serviceType)}
-                            helperText={touched.serviceType && errors.serviceType}
-                          />
+                          <InputLabel id="serviceType" >Service Type</InputLabel>
+                          <Select
+                            labelId="demo-chip-label"
+                            id="demo-chip"
+                            value={formik.values.serviceType}
+                            onChange={(e) => {
+                              formik.setFieldValue('serviceType', e.target.value);
+                            }}
+                            input={<OutlinedInput id="select-chip" placeholder="Group Type" />}
+                            placeholder='Group Type'
+                            renderValue={(selected) =>
+                              selected ? (
+                                <Chip
+                                  label={selected}
+                                  variant="filled"
+                                  color="primary"
+                                  size="small"
+                                />
+                              ) : (
+                                <p style={{ color: '#999', margin: 0 }}>
+                                  Select serviceType
+                                </p>
+                              )
+                            }
+                          >
+                            {requestServiceType.map((serviceType) => (
+                              <MenuItem key={serviceType} value={serviceType}>
+                                {serviceType}
+                              </MenuItem>
+                            ))}
+                          </Select>
                         </Stack>
                       </Grid>
                       <Grid item xs={6}>
                         <Stack spacing={1}>
-                          <InputLabel htmlFor="subServiceType">Sub Service Type</InputLabel>
-                          <TextField
-                            fullWidth
-                            id="subServiceType"
-                            placeholder="Enter Sub Service Type"
-                            {...getFieldProps('subServiceType')}
-                            error={Boolean(touched.subServiceType && errors.subServiceType)}
-                            helperText={touched.subServiceType && errors.subServiceType}
-                          />
+                          <InputLabel id="subServiceType" >Sub Service Type</InputLabel>
+                          <Select
+                            labelId="demo-chip-label"
+                            id="demo-chip"
+                            value={formik.values.subServiceType}
+                            onChange={(e) => {
+                              formik.setFieldValue('subServiceType', e.target.value);
+                            }}
+                            input={<OutlinedInput id="select-chip" placeholder="Group Type" />}
+                            placeholder='Group Type'
+                            renderValue={(selected) =>
+                              selected ? (
+                                <Chip
+                                  label={selected}
+                                  variant="filled"
+                                  color="primary"
+                                  size="small"
+                                />
+                              ) : (
+                                <p style={{ color: '#999', margin: 0 }}>
+                                  Select subServiceType
+                                </p>
+                              )
+                            }
+                          >
+                            {requestSubServiceType.map((subServiceType) => (
+                              <MenuItem key={subServiceType} value={subServiceType}>
+                                {subServiceType}
+                              </MenuItem>
+                            ))}
+                          </Select>
                         </Stack>
                       </Grid>
                       <Grid item xs={6}>
@@ -573,7 +629,7 @@ export default function TableModal({ open, modalToggler, item }: Props) {
                   </DialogActions>
                 </Form>
               </FormikProvider>
-              {/* {item && <AlertItemDelete item={item} open={openAlert} handleClose={handleAlertClose} />} */}
+              {item && <AlertItemDelete item={item} open={openAlert} handleClose={handleAlertClose} />}
             </SimpleBar>
           </MainCard>
         </Modal>

@@ -63,7 +63,7 @@ export const requestRouter = createTRPCRouter({
                 skip,
                 take: limit,
                 where,
-                orderBy: { status: 'asc' }
+                orderBy: { submittedAt: 'desc' }
             }),
             
             
