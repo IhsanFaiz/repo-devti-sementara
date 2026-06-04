@@ -72,7 +72,7 @@ export default function TableModal({ open, modalToggler, item }: Props) {
   const utils = api.useUtils();
   const createUser = api.user.create.useMutation({
     onSuccess: () => {
-      utils.user.getAll.invalidate();
+      utils.user.invalidate();
       utils.user.getPagination.invalidate();
       openSnackbar({
         open: true,
@@ -99,7 +99,7 @@ export default function TableModal({ open, modalToggler, item }: Props) {
 
   const updateUser = api.user.update.useMutation({
     onSuccess: () => {
-      utils.user.getAll.invalidate();
+      utils.user.invalidate();
       utils.user.getPagination.invalidate();
       openSnackbar({
         open: true,

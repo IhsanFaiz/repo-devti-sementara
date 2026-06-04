@@ -154,5 +154,59 @@ export const requestRouter = createTRPCRouter({
         });
     }),
 
+  approve: protectedProcedure
+  .input(
+    yup.object({
+      id: yup.number().required()
+    })
+  )
+  .mutation(async ({ ctx, input }) => {
+    const request = await ctx.db.request.findUnique({
+      where: {
+        id: input.id
+      }
+    });
+
+    if (!request) {
+      throw new Error("Request not found");
+    }
+
+    const project = await ctx.db.project.create({
+      data: {
+        name: request.applicationName ?? "Untitled Project",
+        description: request.description ?? "",
+        status: "WAITING",
+        slaDays: request.slaDays ?? 0,
+      }
+    });
+
+    return await ctx.db.request.update({
+      where: {
+        id: input.id
+      },
+      data: {
+        status: "APPROVED",
+        projectId: project.id
+      }
+    });
+  }),
+
+  reject: protectedProcedure
+  .input(
+    yup.object({
+      id: yup.number().required()
+    })
+  )
+  .mutation(async ({ ctx, input }) => {
+    return await ctx.db.request.update({
+      where: {
+        id: input.id
+      },
+      data: {
+        status: "REJECTED"
+      }
+    });
+  }),
+
 
 })

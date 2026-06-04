@@ -53,18 +53,18 @@ export function DetailView(){
                             <div className="flex flex-col gap-5">
                                 <div>
                                     <div className="flex items-center justify-between">
-                                    <Skeleton variant="text" width={250} height={40} />
-                                    <Skeleton variant="rounded" width={90} height={32} />
+                                    <Skeleton animation="wave" variant="text" width={250} height={40} />
+                                    <Skeleton animation="wave" variant="rounded" width={90} height={32} />
                                     </div>
 
-                                    <Skeleton variant="text" width="100%" />
-                                    <Skeleton variant="text" width="80%" />
+                                    <Skeleton animation="wave" variant="text" width="100%" />
+                                    <Skeleton animation="wave" variant="text" width="80%" />
                                 </div>
 
                                 <div className="flex gap-2 mt-2">
-                                    <Skeleton variant="rounded" width={100} height={32} />
-                                    <Skeleton variant="rounded" width={120} height={32} />
-                                    <Skeleton variant="rounded" width={90} height={32} />
+                                    <Skeleton animation="wave" variant="rounded" width={100} height={32} />
+                                    <Skeleton animation="wave" variant="rounded" width={120} height={32} />
+                                    <Skeleton animation="wave" variant="rounded" width={90} height={32} />
                                 </div>
                             </div>
                         </MainCard>
@@ -74,9 +74,9 @@ export function DetailView(){
                                     key={item}
                                     className="border border-gray-700 rounded-lg p-4 flex flex-col gap-2"
                                 >
-                                    <Skeleton variant="text" width={200} height={32} />
-                                    <Skeleton variant="text" width="100%" />
-                                    <Skeleton variant="rounded" width="100%" height={80} />
+                                    <Skeleton animation="wave" variant="text" width={200} height={32} />
+                                    <Skeleton animation="wave" variant="text" width="100%" />
+                                    <Skeleton animation="wave" variant="rounded" width="100%" height={80} />
                                 </div>
                             ))}
                         </div>

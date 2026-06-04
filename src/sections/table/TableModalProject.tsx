@@ -70,7 +70,8 @@ export default function TableModal({ open, modalToggler, item }: Props) {
   const projectStatus = [
     'ACTIVE',
     'DONE',
-    'CANCELED'
+    'CANCELED',
+    'WAITING'
   ];
 
   const [openAlert, setOpenAlert] = useState(false);
@@ -83,7 +84,7 @@ export default function TableModal({ open, modalToggler, item }: Props) {
   const utils = api.useUtils();
   const createProject = api.project.create.useMutation({
     onSuccess: () => {
-      utils.project.getAll.invalidate();
+      utils.project.invalidate();
       utils.project.getPagination.invalidate();
       openSnackbar({
         open: true,
@@ -110,7 +111,7 @@ export default function TableModal({ open, modalToggler, item }: Props) {
 
   const updateProject = api.project.update.useMutation({
     onSuccess: () => {
-      utils.project.getAll.invalidate();
+      utils.project.invalidate();
       utils.project.getPagination.invalidate();
       openSnackbar({
         open: true,
@@ -275,7 +276,7 @@ export default function TableModal({ open, modalToggler, item }: Props) {
                                 <Chip
                                   label={selected}
                                   variant="filled"
-                                  color={selected === "ACTIVE" ? "success" : selected === "DONE" ? "default" : "error"}
+                                  color={selected === "ACTIVE" ? "success" : selected === "DONE" ? "default" : selected === "WAITING" ? "warning" : "error"}
                                   size="small"
                                 />
                               ) : (

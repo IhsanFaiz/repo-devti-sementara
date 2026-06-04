@@ -133,6 +133,7 @@ export default function TableModal({ open, modalToggler, item }: Props) {
   const utils = api.useUtils();
   const createRequest = api.request.create.useMutation({
     onSuccess: () => {
+      utils.request.invalidate()
       utils.request.getPagination.invalidate();
       openSnackbar({
         open: true,
@@ -159,6 +160,7 @@ export default function TableModal({ open, modalToggler, item }: Props) {
 
   const updateRequest = api.request.update.useMutation({
     onSuccess: () => {
+      utils.request.invalidate()
       utils.request.getPagination.invalidate();
       openSnackbar({
         open: true,
@@ -189,8 +191,14 @@ export default function TableModal({ open, modalToggler, item }: Props) {
     enableReinitialize: true,
     onSubmit: async (values, { setSubmitting }) => {
       try {
-        if (item) await updateRequest.mutateAsync({...values, id: item?.id! });
-        else await createRequest.mutateAsync(values);
+        if (item) {
+          await utils.request.invalidate()
+          await updateRequest.mutateAsync({...values, id: item?.id! });
+        } 
+        else {
+          await utils.request.invalidate()
+          await createRequest.mutateAsync(values);
+        } 
       } catch (error) {
         console.error('Error submitting form:', error);
       } finally {

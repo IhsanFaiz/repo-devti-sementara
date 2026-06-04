@@ -76,6 +76,7 @@ export default function TableModal({
 
   const createField = api.projectField.create.useMutation({
     onSuccess: () => {
+      utils.projectField.invalidate()
       utils.projectField.getByProjectId.invalidate({
         projectId
       });
@@ -99,6 +100,7 @@ export default function TableModal({
 
   const updateField = api.projectField.update.useMutation({
     onSuccess: () => {
+      utils.projectField.invalidate()
       utils.projectField.getByProjectId.invalidate({
         projectId
       });

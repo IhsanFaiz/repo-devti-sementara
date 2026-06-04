@@ -134,7 +134,7 @@ const ProjectTableServer = () => {
         sortingFn: 'alphanumeric',
         cell: ({row}) => {
           return (
-            <Chip  label={row.original.status} color={row.original.status === "ACTIVE" ? "success" : row.original.status === "DONE" ? "default" : "error"}></Chip>
+            <Chip  label={row.original.status} color={row.original.status === "ACTIVE" ? "success" : row.original.status === "DONE" ? "default" : row.original.status === "WAITING" ? "warning" : "error"}></Chip>
           )
         }
       },
@@ -185,18 +185,21 @@ const ProjectTableServer = () => {
   const StatCardSkeleton = () => (
   <MainCard sx={{ height: '100%' }}>
     <Skeleton
+      animation="wave"
       variant="text"
       width={140}
       height={32}
     />
 
     <Skeleton
+      animation="wave"
       variant="text"
       width={60}
       height={50}
     />
 
     <Skeleton
+      animation="wave"
       variant="text"
       width={120}
       height={20}
@@ -207,7 +210,7 @@ const ProjectTableServer = () => {
   return (
     <>
       {isLoading ? (
-        <div className="flex flex-col gap-5 lg:grid lg:grid-cols-4">
+        <div className="flex flex-col gap-5 lg:grid lg:grid-cols-5">
           <StatCardSkeleton />
 
           <div className="bg-emerald-500 rounded-xl pl-1">
@@ -221,9 +224,13 @@ const ProjectTableServer = () => {
           <div className="bg-red-500 rounded-xl pl-1">
             <StatCardSkeleton />
           </div>
+
+          <div className="bg-amber-500 rounded-xl pl-1">
+            <StatCardSkeleton />
+          </div>
         </div>
       ) : (
-        <div className="flex flex-col gap-5 lg:grid lg:grid-cols-4">
+        <div className="flex flex-col gap-5 lg:grid lg:grid-cols-5">
           <MainCard title="Total Projects" sx={{ height: '100%' }}>
             <Typography variant="h3">
               {projects?.total}
@@ -232,6 +239,17 @@ const ProjectTableServer = () => {
               Total Number of Projects
             </Typography>
           </MainCard>
+
+          <div className="bg-amber-500 rounded-xl pl-1">
+            <MainCard title="Waiting Projects" sx={{ height: '100%' }}>
+              <Typography variant="h3">
+                {projects?.statusCounts.WAITING}
+              </Typography>
+              <Typography variant="caption" color="textSecondary">
+                Total Waiting Projects
+              </Typography>
+            </MainCard>
+          </div>
 
           <div className="bg-emerald-500 rounded-xl pl-1">
             <MainCard title="Active Projects" sx={{ height: '100%' }}>
@@ -242,7 +260,7 @@ const ProjectTableServer = () => {
                 Total Active Projects
               </Typography>
             </MainCard>
-          </div>
+          </div>  
 
           <div className="bg-blue-500 rounded-xl pl-1">
             <MainCard title="Done Projects" sx={{ height: '100%' }}>
@@ -254,6 +272,7 @@ const ProjectTableServer = () => {
               </Typography>
             </MainCard>
           </div>
+
 
           <div className="bg-red-500 rounded-xl pl-1">
             <MainCard title="Canceled Projects" sx={{ height: '100%' }}>

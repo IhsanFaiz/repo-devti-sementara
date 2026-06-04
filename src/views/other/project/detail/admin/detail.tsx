@@ -9,8 +9,11 @@ import MainCard from "components/MainCard";
 import { Chip, Skeleton, Button } from "@mui/material";
 import { useState } from "react";
 import TableModal from "sections/table/TableModalField";
+import TableModalAssign from "sections/table/TableModalAssign";
 import ProjectFieldValue from "components/ProjectFieldValue";
 import AlertItemDelete from "sections/table/AlertItemDeleteField";
+import { openSnackbar } from "api/snackbar";
+import { SnackbarProps } from "types/snackbar";
 
 
 export interface ProjectFieldApiResponse {
@@ -26,6 +29,7 @@ export interface ProjectFieldApiResponse {
 export function DetailView(){
 
     const [fieldModal, setFieldModal] = useState(false);
+    const [assignModal, setAssignModal] = useState(false);
     const [selectedField, setSelectedField] = useState<ProjectFieldApiResponse | null>(null);
     const [deleteModal, setDeleteModal] = useState(false);
     const params = useParams()
@@ -38,6 +42,36 @@ export function DetailView(){
     const {data: projectField } = api.projectField.getByProjectId.useQuery({
         projectId: Number(projectId)
     })
+
+    const utils = api.useUtils()
+
+    const startProject = api.project.startProject.useMutation({
+        onSuccess: () => {
+            utils.project.invalidate()
+            utils.project.getById.invalidate({
+                id: Number(projectId)
+            })
+
+            openSnackbar({
+                open: true,
+                message: 'Project has been started.',
+                variant: 'alert',
+                alert: {
+                color: "success"
+                }
+            } as SnackbarProps);
+        },
+        onError: () => {
+            openSnackbar({
+                open: true,
+                message: 'Something is wrong.',
+                variant: 'alert',
+                alert: {
+                color: 'error'
+                }
+            } as SnackbarProps);
+        }
+    }) 
 
     const handleEdit = (
         field: ProjectFieldApiResponse
@@ -52,6 +86,28 @@ export function DetailView(){
         setSelectedField(field);
         setDeleteModal(true);
     };
+
+    const hadleAssign = async () => {
+        if(project?.projectMembers.length === 0){
+            openSnackbar({
+                open: true,
+                message: 'Cannot start project. No members have been assigned yet.',
+                variant: 'alert',
+                alert: {
+                color: 'error'
+                }
+            } as SnackbarProps);
+            return;
+        }else {
+            await startProject.mutateAsync({
+                id: Number(projectId)
+          });
+        }
+    }
+
+    const assignOpenModal = () => {
+        setAssignModal(true)
+    }
 
 
     return(
@@ -68,22 +124,25 @@ export function DetailView(){
                 <div className="flex flex-col lg:col-span-2 gap-8">
                     {isLoading ? (
                     <MainCard>
-                        <div className="flex flex-col gap-5">
-                        <div>
-                            <div className="flex items-center justify-between">
-                            <Skeleton variant="text" width={250} height={40} />
-                            <Skeleton variant="rounded" width={90} height={32} />
+                        <div className="flex flex-col gap-3">
+                            <div>
+                                <div className="flex items-center justify-between">
+                                <Skeleton animation="wave" variant="text" width={250} height={40} />
+                                <Skeleton animation="wave" variant="rounded" width={90} height={32} />
+                                </div>
+
+                                <Skeleton animation="wave" variant="text" width="100%" />
+                                <Skeleton animation="wave" variant="text" width="80%" />
                             </div>
 
-                            <Skeleton variant="text" width="100%" />
-                            <Skeleton variant="text" width="80%" />
-                        </div>
-
-                        <div className="flex gap-2 mt-2">
-                            <Skeleton variant="rounded" width={100} height={32} />
-                            <Skeleton variant="rounded" width={120} height={32} />
-                            <Skeleton variant="rounded" width={90} height={32} />
-                        </div>
+                            <div className="flex gap-2 mt-2">
+                                <Skeleton animation="wave" variant="rounded" width={100} height={32} />
+                                <Skeleton animation="wave" variant="rounded" width={120} height={32} />
+                                <Skeleton animation="wave" variant="rounded" width={90} height={32} />
+                            </div>
+                            <div className="flex gap-2 mt-2">
+                                <Skeleton animation="wave" variant="rounded" width={200} height={32} />
+                            </div>
                         </div>
                     </MainCard>
                     ) : (
@@ -102,33 +161,40 @@ export function DetailView(){
                                         ? "success"
                                         : project?.status === "DONE"
                                         ? "default"
+                                        : project?.status === "WAITING"
+                                        ? "warning"
                                         : "error"
                                     }
                                 />
                                 </div>
 
-                                <Typography variant="h6" color="textSecondary">
+                                <Typography sx={{ whiteSpace: 'pre-line' }} variant="h6" color="textSecondary">
                                     {project?.description}
                                 </Typography>
                             </div>
 
-                            <div>
+                            <div className="flex flex-col gap-2 w-max">
                                 <div className="flex gap-2 mt-2">
-                                {project?.projectMembers.length ? (
-                                    project.projectMembers.map((member) => (
-                                    <Chip
-                                        key={member.userId}
-                                        label={member.user.username}
-                                        color="primary"
-                                    />
-                                    ))
-                                ) : (
-                                    <Chip
-                                    label="No members assigned to this project"
-                                    color="default"
-                                    />
-                                )}
+                                    {project?.projectMembers.length ? (
+                                        project.projectMembers.map((member) => (
+                                        <Chip
+                                            key={member.userId}
+                                            label={member.user.username}
+                                            color="primary"
+                                            variant="outlined"
+                                        />
+                                        ))
+                                    ) : (
+                                        <Chip
+                                        label="No members assigned to this project"
+                                        color="default"
+                                        variant="outlined"
+                                        />
+                                    )}
                                 </div>
+                                <Button onClick={assignOpenModal} variant="contained" color="success">
+                                    Assign Member to this Project
+                                </Button>
                             </div>
                         </div>
                     </MainCard>
@@ -152,9 +218,9 @@ export function DetailView(){
                                             key={item}
                                             className="border border-gray-700 rounded-lg p-4 flex flex-col gap-2"
                                         >
-                                            <Skeleton variant="text" width={200} height={32} />
-                                            <Skeleton variant="text" width="100%" />
-                                            <Skeleton variant="rounded" width="100%" height={80} />
+                                            <Skeleton animation="wave" variant="text" width={200} height={32} />
+                                            <Skeleton animation="wave" variant="text" width="100%" />
+                                            <Skeleton animation="wave" variant="rounded" width="100%" height={80} />
                                         </div>
                                     ))}
                                 </div>
@@ -192,6 +258,34 @@ export function DetailView(){
                             )}
                         </div>
                     </MainCard>
+                    <div className="ml-auto">
+                        {
+                            isLoading ? (
+                                <>
+                                    <Skeleton animation="wave" variant="rounded" width={110} height={35} />
+                                </>
+                            ) : (
+                                <>
+                                    {
+                                        project?.status !== "WAITING" ? (
+                                            <>
+                                                <Button variant="contained" disabled color="success">
+                                                    Start Project
+                                                </Button>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Button onClick={hadleAssign} variant="shadow" color="success">
+                                                    Start Project
+                                                </Button>
+                                            </>
+                                        )
+                                    }
+                                </>
+                            )
+                        }
+                        
+                    </div>
                 </div>
                 <div>
                     <MainCard>
@@ -222,6 +316,7 @@ export function DetailView(){
             </div>
             <AlertItemDelete item={selectedField} open={deleteModal} handleClose={() => setDeleteModal(false)} />
             <TableModal open={fieldModal} modalToggler={setFieldModal} item={selectedField} projectId={Number(projectId)} />
+            <TableModalAssign open={assignModal} modalToggler={setAssignModal} projectId={Number(projectId)} />
         </>
     )
 }

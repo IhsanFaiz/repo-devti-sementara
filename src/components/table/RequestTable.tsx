@@ -90,7 +90,7 @@ const RequestTableServer = () => {
   const { data: request, isLoading } = api.request.getPagination.useQuery({
     limit: Number(limit) || 10,
     page: Number(page) || 1,
-    search: query || ''
+    search: query || '',
   });
 
   const router = useRouter()
@@ -191,18 +191,21 @@ const RequestTableServer = () => {
   const StatCardSkeleton = () => (
     <MainCard sx={{ height: '100%' }}>
       <Skeleton
+        animation="wave"
         variant="text"
         width={140}
         height={32}
       />
   
       <Skeleton
+        animation="wave"
         variant="text"
         width={60}
         height={50}
       />
   
       <Skeleton
+        animation="wave"
         variant="text"
         width={120}
         height={20}

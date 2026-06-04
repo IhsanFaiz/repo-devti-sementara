@@ -2,7 +2,7 @@ import * as yup from 'yup';
 import { createTRPCRouter, protectedProcedure } from '../trpc';
 
 
-type ProjectStatus = 'ACTIVE' | 'DONE' | 'CANCELED';
+type ProjectStatus = 'ACTIVE' | 'DONE' | 'CANCELED' | 'WAITING';
 
 export const projectRouter = createTRPCRouter({
   // 1. CREATE: Create a new project
@@ -91,7 +91,8 @@ export const projectRouter = createTRPCRouter({
     const formattedStatusCounts: Record<ProjectStatus, number> = {
       ACTIVE: 0,
       DONE: 0,
-      CANCELED: 0
+      CANCELED: 0,
+      WAITING: 0
     };
 
     statusCounts.forEach((item) => {
@@ -237,6 +238,81 @@ update: protectedProcedure
       currentPage: page
     };
   }),
+
+  startProject: protectedProcedure
+  .input(
+    yup.object({
+      id: yup.number().required()
+    })
+  )
+  .mutation(async ({ ctx, input }) => {
+    const project = await ctx.db.project.findUnique({
+      where: {
+        id: input.id
+      },
+      include: {
+        projectMembers: true
+      }
+    });
+
+    if (!project) {
+      throw new Error("Project not found");
+    }
+
+    if (project.projectMembers.length === 0) {
+      throw new Error("Please assign at least one member before starting the project.");
+    }
+
+    if (project.status !== "WAITING") {
+      throw new Error("Project has already been started.");
+    }
+
+    const startedAt = new Date();
+
+    const dueDate = project.slaDays
+      ? new Date(
+          startedAt.getTime() +
+          project.slaDays * 24 * 60 * 60 * 1000
+        )
+      : null;
+
+    return await ctx.db.project.update({
+      where: {
+        id: input.id
+      },
+      data: {
+        status: "ACTIVE",
+        startedAt,
+        dueDate
+      }
+    });
+  }),
+
+  assignMembers: protectedProcedure
+  .input(
+    yup.object({
+      projectId: yup.number().required(),
+      members: yup.array().of(yup.number().required()).required()
+    })
+  )
+  .mutation(async ({ ctx, input }) => {
+
+    await ctx.db.projectMember.deleteMany({
+      where: {
+        projectId: input.projectId
+      }
+    });
+
+    await ctx.db.projectMember.createMany({
+      data: input.members.map(userId => ({
+        projectId: input.projectId,
+        userId
+      }))
+    });
+
+    return true;
+  }),
+
 });
 
   

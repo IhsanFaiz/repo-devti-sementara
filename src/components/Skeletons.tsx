@@ -7,8 +7,8 @@ export const TableOptionsSkeleton = () => {
     <Stack spacing={1} sx={{ width: '100%' }}>
       <InputLabel>Tahun Akademik</InputLabel>
       <Stack spacing={1} direction="row" sx={{ width: '100%' }}>
-        <Skeleton variant="rectangular" sx={{ borderRadius: '8px', width: '200px', height: '40px' }} />
-        <Skeleton variant="rectangular" sx={{ borderRadius: '8px', width: '250px', height: '40px' }} />
+        <Skeleton animation="wave" variant="rectangular" sx={{ borderRadius: '8px', width: '200px', height: '40px' }} />
+        <Skeleton animation="wave" variant="rectangular" sx={{ borderRadius: '8px', width: '250px', height: '40px' }} />
       </Stack>
     </Stack>
   );
@@ -17,7 +17,7 @@ export const TableOptionsSkeleton = () => {
 export const TableCellSkeleton = () => {
   return (
     <TableCell>
-      <Skeleton variant="rectangular" sx={{ borderRadius: '8px', width: '100%', height: '24px' }} />
+      <Skeleton animation="wave" variant="rectangular" sx={{ borderRadius: '8px', width: '100%', height: '24px' }} />
     </TableCell>
   );
 };
@@ -38,13 +38,13 @@ export const TableRowPaginationSkeleton = () => {
         <Typography variant="caption" color="secondary">
           Row per page
         </Typography>
-        <Skeleton variant="rectangular" sx={{ borderRadius: '8px', width: '50px', height: '24px' }} />
+        <Skeleton animation="wave" variant="rectangular" sx={{ borderRadius: '8px', width: '50px', height: '24px' }} />
       </Stack>
       <Stack direction="row" sx={{ gap: 2 }}>
-        <Skeleton variant="rectangular" sx={{ borderRadius: '8px', width: '24px', height: '24px' }} />
-        <Skeleton variant="rectangular" sx={{ borderRadius: '8px', width: '24px', height: '24px' }} />
-        <Skeleton variant="rectangular" sx={{ borderRadius: '8px', width: '24px', height: '24px' }} />
-        <Skeleton variant="rectangular" sx={{ borderRadius: '8px', width: '24px', height: '24px' }} />
+        <Skeleton animation="wave" variant="rectangular" sx={{ borderRadius: '8px', width: '24px', height: '24px' }} />
+        <Skeleton animation="wave" variant="rectangular" sx={{ borderRadius: '8px', width: '24px', height: '24px' }} />
+        <Skeleton animation="wave" variant="rectangular" sx={{ borderRadius: '8px', width: '24px', height: '24px' }} />
+        <Skeleton animation="wave" variant="rectangular" sx={{ borderRadius: '8px', width: '24px', height: '24px' }} />
       </Stack>
     </Stack>
   );
@@ -75,7 +75,7 @@ export const FullTableSkeleton = () => {
     <MainCard
       title={
         <Stack sx={{ gap: 3 }}>
-          <Skeleton variant="rectangular" sx={{ borderRadius: '8px', width: '200px', height: '40px' }} />
+          <Skeleton animation="wave" variant="rectangular" sx={{ borderRadius: '8px', width: '200px', height: '40px' }} />
           <TableOptionsSkeleton />
         </Stack>
       }
