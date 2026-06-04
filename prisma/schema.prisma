@@ -60,8 +60,10 @@ model Project {
   id          Int       @id @default(autoincrement())
   name        String
   description String
-  status      String    @default("ACTIVE")
+  status      String    @default("WAITING")
   createdAt   DateTime  @default(now())
+  slaDays     Int?
+  startedAt   DateTime?
   dueDate     DateTime?
   completedAt DateTime?
 
