@@ -51,9 +51,8 @@ model Request {
   priority        String?
   slaDays         Int?
   submittedAt     DateTime @default(now())
-  projectId       Int?     @unique
 
-  project Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  project Project?
 }
 
 model Project {
@@ -62,17 +61,17 @@ model Project {
   description String
   status      String    @default("WAITING")
   createdAt   DateTime  @default(now())
-  slaDays     Int?
   startedAt   DateTime?
   dueDate     DateTime?
   completedAt DateTime?
+  requestId   Int?      @unique
 
+  request        Request?        @relation(fields: [requestId], references: [id], onDelete: Cascade)
   projectMembers ProjectMember[]
   projectFiles   ProjectFile[]
   projectFields  ProjectField[]
   teamProjects   TeamProject[]
   taskLists      TaskList[]
-  request        Request?
 }
 
 model ProjectMember {

@@ -6,7 +6,7 @@ import { DefaultConfigProps, MenuOrientation, ThemeDirection, ThemeMode } from '
 
 // ==============================|| THEME CONSTANT ||============================== //
 export const roleAccess = {
-  admin: ['/dashboard', '/project', '/user', '/project/detail', '/request'],
+  admin: ['/dashboard', '/project', '/user', '/project/detail', '/request', '/sla'],
   user: ['/dashboard', '/my-project', '/project/detail'],
   'admin employee': ['/dashboard', '/employee', '/team', '/applicant', '/selection', '/onboarding',],
   'user employee': ['/dashboard', '/task-list', '/team'],

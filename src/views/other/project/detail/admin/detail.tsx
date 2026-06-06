@@ -14,6 +14,12 @@ import ProjectFieldValue from "components/ProjectFieldValue";
 import AlertItemDelete from "sections/table/AlertItemDeleteField";
 import { openSnackbar } from "api/snackbar";
 import { SnackbarProps } from "types/snackbar";
+import Timeline from '@mui/lab/Timeline';
+import TimelineItem from '@mui/lab/TimelineItem';
+import TimelineSeparator from '@mui/lab/TimelineSeparator';
+import TimelineConnector from '@mui/lab/TimelineConnector';
+import TimelineContent from '@mui/lab/TimelineContent';
+import TimelineDot from '@mui/lab/TimelineDot';
 
 
 export interface ProjectFieldApiResponse {
@@ -34,6 +40,7 @@ export function DetailView(){
     const [deleteModal, setDeleteModal] = useState(false);
     const params = useParams()
     const projectId = params.id
+    const utils = api.useUtils()
 
     const { data: project, isLoading } = api.project.getById.useQuery({
         id: Number(projectId)
@@ -42,8 +49,42 @@ export function DetailView(){
     const {data: projectField } = api.projectField.getByProjectId.useQuery({
         projectId: Number(projectId)
     })
+    
+    const markAsDone = api.project.markAsDone.useMutation({
+        onSuccess: () => {
+            utils.project.invalidate()
+            utils.project.getById.invalidate({
+                id: Number(projectId)
+            })
+            utils.sla.invalidate()
 
-    const utils = api.useUtils()
+            openSnackbar({
+                open: true,
+                message: 'Project Done.',
+                variant: 'alert',
+                alert: {
+                color: "success"
+                }
+            } as SnackbarProps);
+        },
+        onError: () => {
+            openSnackbar({
+                open: true,
+                message: 'Something is wrong.',
+                variant: 'alert',
+                alert: {
+                color: 'error'
+                }
+            } as SnackbarProps);
+        }
+    })
+
+    const handleDone = async() => {
+        await markAsDone.mutateAsync({
+            id: Number(projectId)
+        })
+    }
+
 
     const startProject = api.project.startProject.useMutation({
         onSuccess: () => {
@@ -168,12 +209,12 @@ export function DetailView(){
                                 />
                                 </div>
 
-                                <Typography sx={{ whiteSpace: 'pre-line' }} variant="h6" color="textSecondary">
+                                <Typography className="max-w-xl mt-3" sx={{ whiteSpace: 'pre-line' }} variant="h6" color="textSecondary">
                                     {project?.description}
                                 </Typography>
                             </div>
 
-                            <div className="flex flex-col gap-2 w-max">
+                            <div className="flex flex-col gap-2">
                                 <div className="flex gap-2 mt-2">
                                     {project?.projectMembers.length ? (
                                         project.projectMembers.map((member) => (
@@ -192,9 +233,13 @@ export function DetailView(){
                                         />
                                     )}
                                 </div>
-                                <Button onClick={assignOpenModal} variant="contained" color="success">
-                                    Assign Member to this Project
-                                </Button>
+                                <div className="flex items-start justify-between w-full">
+                                    <Button onClick={assignOpenModal} variant="contained" color="secondary" className="flex gap-2">
+                                        <PlusCircle />
+                                        Assign Member to this Project
+                                    </Button>
+                                    
+                                </div>
                             </div>
                         </div>
                     </MainCard>
@@ -275,7 +320,7 @@ export function DetailView(){
                                             </>
                                         ) : (
                                             <>
-                                                <Button onClick={hadleAssign} variant="shadow" color="success">
+                                                <Button onClick={hadleAssign} disabled={startProject.isPending} variant="shadow" color="success">
                                                     Start Project
                                                 </Button>
                                             </>
@@ -287,7 +332,7 @@ export function DetailView(){
                         
                     </div>
                 </div>
-                <div>
+                <div className="flex flex-col gap-5">
                     <MainCard>
                         <Typography variant="h4" className="flex items-center gap-2">
                             <BadgeQuestionMark />
@@ -312,6 +357,142 @@ export function DetailView(){
                             </Typography>
                         </div>
                     </MainCard>
+                    <MainCard>
+                        <Typography variant="h4">
+                            Timeline
+                        </Typography>
+
+                        {isLoading ? (
+                            <Timeline sx={{ '& .MuiTimelineItem-root:before': { flex: 0, padding: 0 } }} className="mt-5">
+                                {[1, 2, 3].map((item) => (
+                                    <TimelineItem key={item}>
+                                        <TimelineSeparator>
+                                            <TimelineDot variant="outlined" color="primary" />
+                                            {item < 3 && <TimelineConnector />}
+                                        </TimelineSeparator>
+
+                                        <TimelineContent>
+                                            <Skeleton
+                                                variant="rounded"
+                                                width={200}
+                                                height={20}
+                                            />
+                                        </TimelineContent>
+                                    </TimelineItem>
+                                ))}
+                            </Timeline>
+                        ) : project?.startedAt ? (
+                            <Timeline sx={{ '& .MuiTimelineItem-root:before': { flex: 0, padding: 0 } }} className="mt-5">
+                                <TimelineItem>
+                                    <TimelineSeparator>
+                                        <TimelineDot variant="outlined" color="primary" />
+                                        <TimelineConnector />
+                                    </TimelineSeparator>
+
+                                    <TimelineContent>
+                                        <Chip
+                                            label={`Started at ${project.startedAt.toLocaleString(
+                                                "en-US",
+                                                {
+                                                    day: "numeric",
+                                                    month: "long",
+                                                    year: "numeric",
+                                                    hour: "2-digit",
+                                                    minute: "2-digit",
+                                                }
+                                            )}`}
+                                            variant="combined"
+                                            color="info"
+                                        />
+                                    </TimelineContent>
+                                </TimelineItem>
+
+                                <TimelineItem>
+                                    <TimelineSeparator>
+                                        <TimelineDot variant="outlined" color="primary" />
+                                        <TimelineConnector />
+                                    </TimelineSeparator>
+
+                                    <TimelineContent>
+                                        <Chip
+                                            label={`Due date ${project.dueDate?.toLocaleString(
+                                                "en-US",
+                                                {
+                                                    day: "numeric",
+                                                    month: "long",
+                                                    year: "numeric",
+                                                    hour: "2-digit",
+                                                    minute: "2-digit",
+                                                }
+                                            )}`}
+                                            variant="combined"
+                                            color="error"
+                                        />
+                                    </TimelineContent>
+                                </TimelineItem>
+
+                                {project.status === "DONE" && (
+                                    <TimelineItem sx={{ minHeight: "auto" }}>
+                                        <TimelineSeparator>
+                                            <TimelineDot
+                                                variant="outlined"
+                                                color="primary"
+                                            />
+                                        </TimelineSeparator>
+
+                                        <TimelineContent>
+                                            <Chip
+                                                label={`Completed at ${project.completedAt?.toLocaleString(
+                                                    "en-US",
+                                                    {
+                                                        day: "numeric",
+                                                        month: "long",
+                                                        year: "numeric",
+                                                        hour: "2-digit",
+                                                        minute: "2-digit",
+                                                    }
+                                                )}`}
+                                                variant="combined"
+                                                color="success"
+                                            />
+                                        </TimelineContent>
+                                    </TimelineItem>
+                                )}
+                            </Timeline>
+                        ) : (
+                            <Chip
+                                className="mt-5"
+                                label="Project has not started yet"
+                                variant="filled"
+                                color="default"
+                            />
+                        )}
+                    </MainCard>
+                    {
+                        isLoading ? (
+                            <Skeleton
+                                variant="rounded"
+                                sx={{
+                                    width: '100%',
+                                    height: 42,
+                                    borderRadius: 1
+                                }}
+                            />
+                        ) : (
+                            <Button
+                                onClick={handleDone}
+                                disabled={
+                                    project?.status !== "ACTIVE" ||
+                                    markAsDone.isPending
+                                }
+                                variant="contained"
+                                color="success"
+                                fullWidth
+                            >
+                                Mark As Done
+                            </Button>
+                        )
+                    }
                 </div>
             </div>
             <AlertItemDelete item={selectedField} open={deleteModal} handleClose={() => setDeleteModal(false)} />

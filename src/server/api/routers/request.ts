@@ -108,6 +108,9 @@ export const requestRouter = createTRPCRouter({
       getById: protectedProcedure.input(yup.object({ id: yup.number().required() })).query(async ({ ctx, input }) => {
         return ctx.db.request.findUnique({
           where: { id: input.id },
+          include: {
+            project: true
+          }
         });
       }),
     
@@ -176,7 +179,7 @@ export const requestRouter = createTRPCRouter({
         name: request.applicationName ?? "Untitled Project",
         description: request.description ?? "",
         status: "WAITING",
-        slaDays: request.slaDays ?? 0,
+        requestId: request.id
       }
     });
 
@@ -186,7 +189,6 @@ export const requestRouter = createTRPCRouter({
       },
       data: {
         status: "APPROVED",
-        projectId: project.id
       }
     });
   }),

@@ -3,7 +3,7 @@ import { FormattedMessage } from 'react-intl';
 
 // ASSETS
 import { DocumentCode2, TableDocument, Paperclip2, Profile, } from 'iconsax-react';
-import { Users2, Compass, FileText, BriefcaseBusiness, ClipboardListIcon, FileChartColumnIcon } from 'lucide-react';
+import { Users2, Compass, FileText, BriefcaseBusiness, ClipboardListIcon, FileChartColumnIcon, FileBadge } from 'lucide-react';
 
 // TYPE
 import { NavItemType } from 'types/menu';
@@ -19,7 +19,8 @@ const icons = {
   applicant: FileText,
   selection: ClipboardListIcon,
   team: BriefcaseBusiness,
-  request: FileChartColumnIcon
+  request: FileChartColumnIcon,
+  sla: FileBadge,
 };
 
 // ==============================|| MENU ITEMS - SAMPLE PAGE ||============================== //
@@ -52,6 +53,13 @@ const allPages: NavItemType = {
       type: 'item',
       icon: icons.project,
       url: '/project'
+    },
+    {
+      id: 'sla',
+      title: <FormattedMessage id="Service Level Agreement (SLA)" />,
+      type: 'item',
+      icon: icons.sla,
+      url: '/sla'
     },
     {
       id: 'user',

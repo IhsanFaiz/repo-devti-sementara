@@ -9,16 +9,24 @@ import MainCard from "components/MainCard"
 import { Landmark  } from "lucide-react"
 import { openSnackbar } from "api/snackbar"
 import { SnackbarProps } from "types/snackbar"
+import { useRouter } from "next/navigation"
 
 export function DetailView(){
 
     const params = useParams()
     const requestId = params.id
     const utils = api.useUtils()
+    const router = useRouter()
+
+    
 
     const {data: request, isLoading}= api.request.getById.useQuery({
         id: Number(requestId)
     })
+
+    const navToProject = () => {
+        router.push(`/project/detail/${request?.project?.id}`)
+    }
 
     const approveMutation = api.request.approve.useMutation({
         onSuccess: () => {
@@ -280,6 +288,19 @@ export function DetailView(){
                                         </div>
                                     </div>
                                 </MainCard>
+                                {
+                                    request?.status === "APPROVED" ? (
+                                        <Button className="flex mt-5 w-full" onClick={navToProject} variant="contained">
+                                            See in project
+                                        </Button>
+                                    ) : (
+                                        <>
+                                        <Button disabled className="flex mt-5 w-full" variant="contained">
+                                            See in project
+                                        </Button>
+                                        </>
+                                    )
+                                }
                             </>
                         )
                     }

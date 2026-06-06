@@ -117,9 +117,11 @@ export const projectRouter = createTRPCRouter({
       include: {
         projectMembers: {
           include: {
-            user: true
+            user: true,
           }
         },
+
+        request: true,
       }
     });
   }),
@@ -251,7 +253,8 @@ update: protectedProcedure
         id: input.id
       },
       include: {
-        projectMembers: true
+        projectMembers: true,
+        request: true
       }
     });
 
@@ -269,10 +272,10 @@ update: protectedProcedure
 
     const startedAt = new Date();
 
-    const dueDate = project.slaDays
+    const dueDate = project.request?.slaDays
       ? new Date(
           startedAt.getTime() +
-          project.slaDays * 24 * 60 * 60 * 1000
+          project.request?.slaDays * 24 * 60 * 60 * 1000
         )
       : null;
 
@@ -311,6 +314,34 @@ update: protectedProcedure
     });
 
     return true;
+  }),
+
+  markAsDone: protectedProcedure
+  .input(
+    yup.object({
+      id: yup.number().required()
+    })
+  )
+  .mutation(async ({ ctx, input }) => {
+    const project = await ctx.db.project.findUnique({
+      where: {
+        id: input.id
+      }
+    });
+
+    if (!project) {
+      throw new Error("Project not found");
+    }
+
+    return await ctx.db.project.update({
+      where: {
+        id: input.id
+      },
+      data: {
+        status: "DONE",
+        completedAt: new Date()
+      }
+    });
   }),
 
 });

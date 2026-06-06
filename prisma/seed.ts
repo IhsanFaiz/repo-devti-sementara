@@ -68,30 +68,7 @@ async function main() {
       skipDuplicates: true,
     })
 
-    
-    const project = [
-      {
-        name: "DevTi Guidelines",
-        description: "project DevTi Guidelines employee manajement sistem",
-        status: "ACTIVE",
-      },
-      {
-        name: "DevTeam Dashboard",
-        description: "project DevTeam Dashboard project manajement sistem",
-        status: "DONE",
-      },
-      {
-        name: "Dashboard manager",
-        description: "project dashboard manager manajement sistem",
-        status: "CANCELED",
-      }
-    ]
-    
-    await prisma.project.createMany({
-      data: project,
-      skipDuplicates: true
-    })
-    
+
     const request = [
       {
         references: "Aplikasi Pembuatan Surat Online (BaSO) 1.5",
@@ -125,7 +102,7 @@ async function main() {
         subServiceType: "Pengembangan API kecil",
         priority: "MEDIUM",
         slaDays: 66,
-        status: "APPROVED"
+        status: "APPROVED",
       },
       {
         references: "API Support untuk Aplikasi PRADA : PANDA",
@@ -150,6 +127,23 @@ async function main() {
     data: request,
     skipDuplicates: true
   })
+
+    
+    const project = [
+      {
+        name: "API Notifikasi My TelU untuk CELOE",
+        description: "Penyesuaian Aplikasi dampak dari adanya TUNC : \n 1. Penambahan lokasi pembuatan Surat berdasarkan TUNC (Jakarta, Purwokerto, Surabaya) \n 2. Penambahan Notifikasi ke Email masing-masing stakeholder di dalam surat",
+        status: "WAITING",
+        requestId: 2
+      },
+    ]
+    
+    await prisma.project.createMany({
+      data: project,
+      skipDuplicates: true
+    })
+    
+    
     
   
   console.log('✅ Seeding finished.');

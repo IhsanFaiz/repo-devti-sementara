@@ -73,7 +73,9 @@ export default function TableModal({ open, modalToggler, item }: Props) {
 
   const requestServiceType = [
     'RFC_Change_App',
+    'RFC_API',
     'Permintaan_New_API_or_Major',
+    'Permintaan_New_App_or_Major'
   ];
 
   const requestSubServiceType = [
