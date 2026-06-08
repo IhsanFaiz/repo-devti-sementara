@@ -92,8 +92,6 @@ export const requestRouter = createTRPCRouter({
             item._count.status;
         });
     
-        console.log(statusCounts)
-    
         return {
           data: request,
           total,
