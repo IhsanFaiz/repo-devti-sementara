@@ -8,8 +8,8 @@ import { DefaultConfigProps, MenuOrientation, ThemeDirection, ThemeMode } from '
 export const roleAccess = {
   admin: ['/dashboard', '/project', '/user', '/project/detail', '/request', '/sla'],
   user: ['/dashboard', '/my-project', '/project/detail'],
-  'admin employee': ['/dashboard', '/employee', '/team', '/applicant', '/selection', '/onboarding',],
-  'user employee': ['/dashboard', '/task-list', '/team'],
+  'admin employee': ['/dashboard', '/employee', '/team', '/applicant', '/selection', '/onboarding'],
+  'user employee': ['/dashboard', '/task-list', '/team']
 };
 export const APP_DEFAULT_PATH = '/dashboard';
 export const HORIZONTAL_MAX_ITEM = 6;

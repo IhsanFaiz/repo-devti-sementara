@@ -31,14 +31,17 @@ export const projectFieldRouter = createTRPCRouter({
       yup.object({
         projectId: yup.number().required(),
 
-        fields: yup.array().of(
-          yup.object({
-            label: yup.string().required(),
-            type: yup.string().required(),
-            required: yup.boolean().default(false),
-            placeholder: yup.string().nullable().optional()
-          })
-        ).required()
+        fields: yup
+          .array()
+          .of(
+            yup.object({
+              label: yup.string().required(),
+              type: yup.string().required(),
+              required: yup.boolean().default(false),
+              placeholder: yup.string().nullable().optional()
+            })
+          )
+          .required()
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -55,31 +58,31 @@ export const projectFieldRouter = createTRPCRouter({
 
   // 3. GET ALL FIELDS BY PROJECT ID
   getByProjectId: protectedProcedure
-  .input(
-    yup.object({
-      projectId: yup.number().required()
-    })
-  )
-  .query(async ({ ctx, input }) => {
-    return ctx.db.projectField.findMany({
-      where: {
-        projectId: input.projectId
-      },
+    .input(
+      yup.object({
+        projectId: yup.number().required()
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      return ctx.db.projectField.findMany({
+        where: {
+          projectId: input.projectId
+        },
 
-      include: {
-        values: {
-          include: {
-            file: true,
-            user: true
+        include: {
+          values: {
+            include: {
+              file: true,
+              user: true
+            }
           }
-        }
-      },
+        },
 
-      orderBy: {
-        createdAt: 'asc'
-      }
-    });
-  }),
+        orderBy: {
+          createdAt: 'asc'
+        }
+      });
+    }),
 
   // 4. GET SINGLE FIELD
   getById: protectedProcedure
@@ -142,14 +145,17 @@ export const projectFieldRouter = createTRPCRouter({
       yup.object({
         projectId: yup.number().required(),
 
-        fields: yup.array().of(
-          yup.object({
-            label: yup.string().required(),
-            type: yup.string().required(),
-            required: yup.boolean().default(false),
-            placeholder: yup.string().nullable().optional()
-          })
-        ).required()
+        fields: yup
+          .array()
+          .of(
+            yup.object({
+              label: yup.string().required(),
+              type: yup.string().required(),
+              required: yup.boolean().default(false),
+              placeholder: yup.string().nullable().optional()
+            })
+          )
+          .required()
       })
     )
     .mutation(async ({ ctx, input }) => {

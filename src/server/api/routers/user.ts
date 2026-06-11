@@ -54,7 +54,7 @@ export const userRouter = createTRPCRouter({
             ? {
                 OR: [
                   { username: { contains: input.search, mode: 'insensitive' } },
-                  { email: { contains: input.search, mode: 'insensitive' } },
+                  { email: { contains: input.search, mode: 'insensitive' } }
                 ]
               }
             : undefined,
@@ -66,7 +66,7 @@ export const userRouter = createTRPCRouter({
             ? {
                 OR: [
                   { username: { contains: input.search, mode: 'insensitive' } },
-                  { email: { contains: input.search, mode: 'insensitive' } },
+                  { email: { contains: input.search, mode: 'insensitive' } }
                 ]
               }
             : undefined

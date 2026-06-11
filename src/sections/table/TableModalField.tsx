@@ -1,6 +1,5 @@
 'use client';
 
-
 import {
   Button,
   DialogActions,
@@ -28,7 +27,6 @@ import { ProjectFieldApiResponse } from 'views/other/project/detail/admin/detail
 
 import { api } from 'trpc/react';
 
-
 interface Props {
   open: boolean;
   modalToggler: (state: boolean) => void;
@@ -36,10 +34,7 @@ interface Props {
   projectId: number;
 }
 
-function getInitialValues(
-  item: ProjectFieldApiResponse | null,
-  projectId: number
-) {
+function getInitialValues(item: ProjectFieldApiResponse | null, projectId: number) {
   return {
     id: item?.id || 0,
     projectId,
@@ -51,23 +46,10 @@ function getInitialValues(
   };
 }
 
-export default function TableModal({
-  open,
-  modalToggler,
-  item,
-  projectId
-}: Props) {
+export default function TableModal({ open, modalToggler, item, projectId }: Props) {
   const utils = api.useUtils();
 
-  const fieldTypes = [
-    'TEXT',
-    'TEXTAREA',
-    'NUMBER',
-    'DATE',
-    'FILE',
-    'IMAGE',
-    'VIDEO'
-  ];
+  const fieldTypes = ['TEXT', 'TEXTAREA', 'NUMBER', 'DATE', 'FILE', 'IMAGE', 'VIDEO'];
 
   const ItemSchema = Yup.object().shape({
     label: Yup.string().required('Label is required'),
@@ -76,31 +58,31 @@ export default function TableModal({
 
   const createField = api.projectField.create.useMutation({
     onSuccess: () => {
-      utils.projectField.invalidate()
+      utils.projectField.invalidate();
       utils.projectField.getByProjectId.invalidate({
         projectId
       });
 
       openSnackbar({
-              open: true,
-              message: 'Fiedl created successfully.',
-              variant: 'alert',
-              alert: {
-                color: 'success'
-              }
-            } as SnackbarProps);
+        open: true,
+        message: 'Fiedl created successfully.',
+        variant: 'alert',
+        alert: {
+          color: 'success'
+        }
+      } as SnackbarProps);
 
       closeModal();
     },
 
     onError: (err) => {
-        console.error(err);
+      console.error(err);
     }
   });
 
   const updateField = api.projectField.update.useMutation({
     onSuccess: () => {
-      utils.projectField.invalidate()
+      utils.projectField.invalidate();
       utils.projectField.getByProjectId.invalidate({
         projectId
       });
@@ -139,13 +121,7 @@ export default function TableModal({
     }
   });
 
-  const {
-    errors,
-    touched,
-    handleSubmit,
-    isSubmitting,
-    getFieldProps
-  } = formik;
+  const { errors, touched, handleSubmit, isSubmitting, getFieldProps } = formik;
 
   const closeModal = () => modalToggler(false);
 
@@ -184,9 +160,7 @@ export default function TableModal({
             >
               <FormikProvider value={formik}>
                 <Form noValidate onSubmit={handleSubmit}>
-                  <DialogTitle>
-                    {item ? 'Edit Field' : 'Create Field'}
-                  </DialogTitle>
+                  <DialogTitle>{item ? 'Edit Field' : 'Create Field'}</DialogTitle>
 
                   <Divider />
 
@@ -194,44 +168,25 @@ export default function TableModal({
                     <Grid container spacing={3}>
                       <Grid item xs={12}>
                         <Stack spacing={1}>
-                          <InputLabel>
-                            Field Label
-                          </InputLabel>
+                          <InputLabel>Field Label</InputLabel>
 
                           <TextField
                             fullWidth
                             placeholder="Github Repository"
                             {...getFieldProps('label')}
-                            error={Boolean(
-                              touched.label && errors.label
-                            )}
-                            helperText={
-                              touched.label && errors.label
-                            }
+                            error={Boolean(touched.label && errors.label)}
+                            helperText={touched.label && errors.label}
                           />
                         </Stack>
                       </Grid>
 
                       <Grid item xs={12}>
                         <Stack spacing={1}>
-                          <InputLabel>
-                            Field Type
-                          </InputLabel>
+                          <InputLabel>Field Type</InputLabel>
 
-                          <Select
-                            value={formik.values.type}
-                            onChange={(e) =>
-                              formik.setFieldValue(
-                                'type',
-                                e.target.value
-                              )
-                            }
-                          >
+                          <Select value={formik.values.type} onChange={(e) => formik.setFieldValue('type', e.target.value)}>
                             {fieldTypes.map((type) => (
-                              <MenuItem
-                                key={type}
-                                value={type}
-                              >
+                              <MenuItem key={type} value={type}>
                                 {type}
                               </MenuItem>
                             ))}
@@ -241,34 +196,16 @@ export default function TableModal({
 
                       <Grid item xs={12}>
                         <Stack spacing={1}>
-                          <InputLabel>
-                            Placeholder
-                          </InputLabel>
+                          <InputLabel>Placeholder</InputLabel>
 
-                          <TextField
-                            fullWidth
-                            placeholder="Enter value..."
-                            {...getFieldProps(
-                              'placeholder'
-                            )}
-                          />
+                          <TextField fullWidth placeholder="Enter value..." {...getFieldProps('placeholder')} />
                         </Stack>
                       </Grid>
 
                       <Grid item xs={12}>
                         <FormControlLabel
                           control={
-                            <Switch
-                              checked={
-                                formik.values.required
-                              }
-                              onChange={(e) =>
-                                formik.setFieldValue(
-                                  'required',
-                                  e.target.checked
-                                )
-                              }
-                            />
+                            <Switch checked={formik.values.required} onChange={(e) => formik.setFieldValue('required', e.target.checked)} />
                           }
                           label="Required Field"
                         />
@@ -279,23 +216,12 @@ export default function TableModal({
                   <Divider />
 
                   <DialogActions sx={{ p: 2.5 }}>
-                    <Stack
-                      direction="row"
-                      spacing={2}
-                      ml="auto"
-                    >
-                      <Button
-                        color="error"
-                        onClick={closeModal}
-                      >
+                    <Stack direction="row" spacing={2} ml="auto">
+                      <Button color="error" onClick={closeModal}>
                         Cancel
                       </Button>
 
-                      <Button
-                        type="submit"
-                        variant="contained"
-                        disabled={isSubmitting}
-                      >
+                      <Button type="submit" variant="contained" disabled={isSubmitting}>
                         {item ? 'Save' : 'Create'}
                       </Button>
                     </Stack>

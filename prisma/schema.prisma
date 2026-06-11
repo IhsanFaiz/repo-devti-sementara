@@ -143,12 +143,17 @@ model Employee {
   status           String
   previousPosition String?
   currentPosition  String?
+  employeeType     String?
+  jobDesc          String?
+  nip              String?
+  keteranganDate   String?
 
   user              User?               @relation(fields: [userId], references: [id], onDelete: Cascade)
   applicant         Applicant?          @relation(fields: [applicantId], references: [id], onDelete: Cascade)
   jobDesk           JobDesk?            @relation(fields: [jobDeskId], references: [id], onDelete: Cascade)
   onboardingProgres OnboardingProgres[]
   taskLists         TaskList[]
+  teamMembers       TeamMember[]
 }
 
 model Applicant {
@@ -169,6 +174,7 @@ model Applicant {
   writtenTestScore    Int?
   interviewScore      Int?
   miniProjectScore    Int?
+  finalInterview      String?
   result              String?
 
   jobOpening         JobOpening?         @relation(fields: [jobOpeningId], references: [id], onDelete: Cascade)
@@ -218,6 +224,16 @@ model Team {
   teamName String
 
   teamProjects TeamProject[]
+  teamMembers  TeamMember[]
+}
+
+model TeamMember {
+  id         Int @id @default(autoincrement())
+  teamId     Int
+  employeeId Int
+
+  team     Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
 }
 
 model TeamProject {

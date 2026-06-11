@@ -53,10 +53,7 @@ export default function TableModal({ open, modalToggler, item }: Props) {
     roleId: Yup.number().required('Role is required')
   });
 
-  const { data: userDetail } = api.user.getById.useQuery(
-    { id: item?.id || 0 },
-    { enabled: Boolean(item?.id) }
-  );
+  const { data: userDetail } = api.user.getById.useQuery({ id: item?.id || 0 }, { enabled: Boolean(item?.id) });
 
   const { data: roles } = api.role.getAll.useQuery();
 
@@ -130,8 +127,15 @@ export default function TableModal({ open, modalToggler, item }: Props) {
     enableReinitialize: true,
     onSubmit: async (values, { setSubmitting }) => {
       try {
-        if (item) await updateUser.mutateAsync({ id: item?.id!, username: values.username, email: values.email, roleId: Number(values.roleId) });
-        else await createUser.mutateAsync({ username: values.username, email: values.email, password: values.password, roleId: Number(values.roleId) });
+        if (item)
+          await updateUser.mutateAsync({ id: item?.id!, username: values.username, email: values.email, roleId: Number(values.roleId) });
+        else
+          await createUser.mutateAsync({
+            username: values.username,
+            email: values.email,
+            password: values.password,
+            roleId: Number(values.roleId)
+          });
       } catch (error) {
         console.error('Error submitting form:', error);
       } finally {

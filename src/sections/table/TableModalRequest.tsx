@@ -44,39 +44,30 @@ function getInitialValues(item: RequestApiResponse | null) {
     references: item?.references || '',
     applicationName: item?.applicationName || '',
     status: item?.status || 'PENDING',
-    description     :item?.description || '',
-    version         :item?.version || '',
-    via             :item?.via || 'NDE & Notulensi',
-    psal            :item?.psal || '',
-    department      :item?.department || '',
-    category        :item?.category || 'Akademik',
-    framework       :item?.framework || 'SATU',
-    groupType       :item?.groupType || 'Application',
-    serviceType     :item?.serviceType || 'RFC_Change_App',
-    subServiceType  :item?.subServiceType || 'Perubahan aplikasi minor',
-    priority        :item?.priority || 'MEDIUM',
-    slaDays         :item?.slaDays || 0,
+    description: item?.description || '',
+    version: item?.version || '',
+    via: item?.via || 'NDE & Notulensi',
+    psal: item?.psal || '',
+    department: item?.department || '',
+    category: item?.category || 'Akademik',
+    framework: item?.framework || 'SATU',
+    groupType: item?.groupType || 'Application',
+    serviceType: item?.serviceType || 'RFC_Change_App',
+    subServiceType: item?.subServiceType || 'Perubahan aplikasi minor',
+    priority: item?.priority || 'MEDIUM',
+    slaDays: item?.slaDays || 0
   };
 }
 
 export default function TableModal({ open, modalToggler, item }: Props) {
   const ItemSchema = Yup.object().shape({
     references: Yup.string().required('References is required'),
-    applicationName: Yup.string().required('App Name is required'),
+    applicationName: Yup.string().required('App Name is required')
   });
 
-  const requestStatus = [
-    'APPROVED',
-    'PENDING',
-    'REJECTED'
-  ];
+  const requestStatus = ['APPROVED', 'PENDING', 'REJECTED'];
 
-  const requestServiceType = [
-    'RFC_Change_App',
-    'RFC_API',
-    'Permintaan_New_API_or_Major',
-    'Permintaan_New_App_or_Major'
-  ];
+  const requestServiceType = ['RFC_Change_App', 'RFC_API', 'Permintaan_New_API_or_Major', 'Permintaan_New_App_or_Major'];
 
   const requestSubServiceType = [
     'Perubahan aplikasi minor',
@@ -85,47 +76,21 @@ export default function TableModal({ open, modalToggler, item }: Props) {
     'Pengembangan API sedang'
   ];
 
-  const requestPriority = [
-    'HIGH',
-    'MEDIUM',
-    'LOW'
-  ];
+  const requestPriority = ['HIGH', 'MEDIUM', 'LOW'];
 
-  const requestVia = [
-    'NDE & Notulensi',
-    'NDE',
-    'Notulensi',
-    'Tiket'
-  ];
+  const requestVia = ['NDE & Notulensi', 'NDE', 'Notulensi', 'Tiket'];
 
-  const requestCategory = [
-    'Akademik',
-    'Non Akademik',
-    'Strategis',
-  ];
+  const requestCategory = ['Akademik', 'Non Akademik', 'Strategis'];
 
-  const requestFramework = [
-    'SATU',
-    'iGracias',
-    'SITU',
-    'My Tel-U Core',
-  ];
+  const requestFramework = ['SATU', 'iGracias', 'SITU', 'My Tel-U Core'];
 
-  const requestGroupType = [
-    'Application',
-    'API',
-  ];
-
-  
+  const requestGroupType = ['Application', 'API'];
 
   const [openAlert, setOpenAlert] = useState(false);
 
-  const { data: requestDetail } = api.request.getById.useQuery(
-      { id: item?.id || 0 },
-      { enabled: Boolean(item?.id) }
-    );
-  
-    const editingItem = requestDetail ?? item;
+  const { data: requestDetail } = api.request.getById.useQuery({ id: item?.id || 0 }, { enabled: Boolean(item?.id) });
+
+  const editingItem = requestDetail ?? item;
 
   const handleAlertClose = () => {
     setOpenAlert(!openAlert);
@@ -135,7 +100,7 @@ export default function TableModal({ open, modalToggler, item }: Props) {
   const utils = api.useUtils();
   const createRequest = api.request.create.useMutation({
     onSuccess: () => {
-      utils.request.invalidate()
+      utils.request.invalidate();
       utils.request.getPagination.invalidate();
       openSnackbar({
         open: true,
@@ -162,7 +127,7 @@ export default function TableModal({ open, modalToggler, item }: Props) {
 
   const updateRequest = api.request.update.useMutation({
     onSuccess: () => {
-      utils.request.invalidate()
+      utils.request.invalidate();
       utils.request.getPagination.invalidate();
       openSnackbar({
         open: true,
@@ -194,13 +159,12 @@ export default function TableModal({ open, modalToggler, item }: Props) {
     onSubmit: async (values, { setSubmitting }) => {
       try {
         if (item) {
-          await utils.request.invalidate()
-          await updateRequest.mutateAsync({...values, id: item?.id! });
-        } 
-        else {
-          await utils.request.invalidate()
+          await utils.request.invalidate();
+          await updateRequest.mutateAsync({ ...values, id: item?.id! });
+        } else {
+          await utils.request.invalidate();
           await createRequest.mutateAsync(values);
-        } 
+        }
       } catch (error) {
         console.error('Error submitting form:', error);
       } finally {
@@ -302,7 +266,7 @@ export default function TableModal({ open, modalToggler, item }: Props) {
                       </Grid>
                       <Grid item xs={6}>
                         <Stack spacing={1}>
-                          <InputLabel id="category" >Category</InputLabel>
+                          <InputLabel id="category">Category</InputLabel>
                           <Select
                             labelId="demo-chip-label"
                             id="demo-chip"
@@ -311,19 +275,12 @@ export default function TableModal({ open, modalToggler, item }: Props) {
                               formik.setFieldValue('category', e.target.value);
                             }}
                             input={<OutlinedInput id="select-chip" placeholder="Category" />}
-                            placeholder='Category'
+                            placeholder="Category"
                             renderValue={(selected) =>
                               selected ? (
-                                <Chip
-                                  label={selected}
-                                  variant="filled"
-                                  color="primary"
-                                  size="small"
-                                />
+                                <Chip label={selected} variant="filled" color="primary" size="small" />
                               ) : (
-                                <p style={{ color: '#999', margin: 0 }}>
-                                  Select category
-                                </p>
+                                <p style={{ color: '#999', margin: 0 }}>Select category</p>
                               )
                             }
                           >
@@ -337,7 +294,7 @@ export default function TableModal({ open, modalToggler, item }: Props) {
                       </Grid>
                       <Grid item xs={6}>
                         <Stack spacing={1}>
-                          <InputLabel id="via" >via</InputLabel>
+                          <InputLabel id="via">via</InputLabel>
                           <Select
                             labelId="demo-chip-label"
                             id="demo-chip"
@@ -346,19 +303,12 @@ export default function TableModal({ open, modalToggler, item }: Props) {
                               formik.setFieldValue('via', e.target.value);
                             }}
                             input={<OutlinedInput id="select-chip" placeholder="Via" />}
-                            placeholder='Via'
+                            placeholder="Via"
                             renderValue={(selected) =>
                               selected ? (
-                                <Chip
-                                  label={selected}
-                                  variant="filled"
-                                  color="primary"
-                                  size="small"
-                                />
+                                <Chip label={selected} variant="filled" color="primary" size="small" />
                               ) : (
-                                <p style={{ color: '#999', margin: 0 }}>
-                                  Select via
-                                </p>
+                                <p style={{ color: '#999', margin: 0 }}>Select via</p>
                               )
                             }
                           >
@@ -372,7 +322,7 @@ export default function TableModal({ open, modalToggler, item }: Props) {
                       </Grid>
                       <Grid item xs={6}>
                         <Stack spacing={1}>
-                          <InputLabel id="framework" >Framework</InputLabel>
+                          <InputLabel id="framework">Framework</InputLabel>
                           <Select
                             labelId="demo-chip-label"
                             id="demo-chip"
@@ -381,19 +331,12 @@ export default function TableModal({ open, modalToggler, item }: Props) {
                               formik.setFieldValue('framework', e.target.value);
                             }}
                             input={<OutlinedInput id="select-chip" placeholder="Framework" />}
-                            placeholder='Framework'
+                            placeholder="Framework"
                             renderValue={(selected) =>
                               selected ? (
-                                <Chip
-                                  label={selected}
-                                  variant="filled"
-                                  color="primary"
-                                  size="small"
-                                />
+                                <Chip label={selected} variant="filled" color="primary" size="small" />
                               ) : (
-                                <p style={{ color: '#999', margin: 0 }}>
-                                  Select framework
-                                </p>
+                                <p style={{ color: '#999', margin: 0 }}>Select framework</p>
                               )
                             }
                           >
@@ -411,7 +354,7 @@ export default function TableModal({ open, modalToggler, item }: Props) {
                           <TextField
                             fullWidth
                             id="version"
-                            type='number'
+                            type="number"
                             placeholder="Enter Version"
                             {...getFieldProps('version')}
                             error={Boolean(touched.version && errors.version)}
@@ -421,7 +364,7 @@ export default function TableModal({ open, modalToggler, item }: Props) {
                       </Grid>
                       <Grid item xs={6}>
                         <Stack spacing={1}>
-                          <InputLabel id="groupType" >Group Type</InputLabel>
+                          <InputLabel id="groupType">Group Type</InputLabel>
                           <Select
                             labelId="demo-chip-label"
                             id="demo-chip"
@@ -430,19 +373,12 @@ export default function TableModal({ open, modalToggler, item }: Props) {
                               formik.setFieldValue('groupType', e.target.value);
                             }}
                             input={<OutlinedInput id="select-chip" placeholder="Group Type" />}
-                            placeholder='Group Type'
+                            placeholder="Group Type"
                             renderValue={(selected) =>
                               selected ? (
-                                <Chip
-                                  label={selected}
-                                  variant="filled"
-                                  color="primary"
-                                  size="small"
-                                />
+                                <Chip label={selected} variant="filled" color="primary" size="small" />
                               ) : (
-                                <p style={{ color: '#999', margin: 0 }}>
-                                  Select groupType
-                                </p>
+                                <p style={{ color: '#999', margin: 0 }}>Select groupType</p>
                               )
                             }
                           >
@@ -456,7 +392,7 @@ export default function TableModal({ open, modalToggler, item }: Props) {
                       </Grid>
                       <Grid item xs={6}>
                         <Stack spacing={1}>
-                          <InputLabel id="serviceType" >Service Type</InputLabel>
+                          <InputLabel id="serviceType">Service Type</InputLabel>
                           <Select
                             labelId="demo-chip-label"
                             id="demo-chip"
@@ -465,19 +401,12 @@ export default function TableModal({ open, modalToggler, item }: Props) {
                               formik.setFieldValue('serviceType', e.target.value);
                             }}
                             input={<OutlinedInput id="select-chip" placeholder="Group Type" />}
-                            placeholder='Group Type'
+                            placeholder="Group Type"
                             renderValue={(selected) =>
                               selected ? (
-                                <Chip
-                                  label={selected}
-                                  variant="filled"
-                                  color="primary"
-                                  size="small"
-                                />
+                                <Chip label={selected} variant="filled" color="primary" size="small" />
                               ) : (
-                                <p style={{ color: '#999', margin: 0 }}>
-                                  Select serviceType
-                                </p>
+                                <p style={{ color: '#999', margin: 0 }}>Select serviceType</p>
                               )
                             }
                           >
@@ -491,7 +420,7 @@ export default function TableModal({ open, modalToggler, item }: Props) {
                       </Grid>
                       <Grid item xs={6}>
                         <Stack spacing={1}>
-                          <InputLabel id="subServiceType" >Sub Service Type</InputLabel>
+                          <InputLabel id="subServiceType">Sub Service Type</InputLabel>
                           <Select
                             labelId="demo-chip-label"
                             id="demo-chip"
@@ -500,19 +429,12 @@ export default function TableModal({ open, modalToggler, item }: Props) {
                               formik.setFieldValue('subServiceType', e.target.value);
                             }}
                             input={<OutlinedInput id="select-chip" placeholder="Group Type" />}
-                            placeholder='Group Type'
+                            placeholder="Group Type"
                             renderValue={(selected) =>
                               selected ? (
-                                <Chip
-                                  label={selected}
-                                  variant="filled"
-                                  color="primary"
-                                  size="small"
-                                />
+                                <Chip label={selected} variant="filled" color="primary" size="small" />
                               ) : (
-                                <p style={{ color: '#999', margin: 0 }}>
-                                  Select subServiceType
-                                </p>
+                                <p style={{ color: '#999', margin: 0 }}>Select subServiceType</p>
                               )
                             }
                           >
@@ -526,7 +448,7 @@ export default function TableModal({ open, modalToggler, item }: Props) {
                       </Grid>
                       <Grid item xs={6}>
                         <Stack spacing={1}>
-                          <InputLabel id="priority" >Priority</InputLabel>
+                          <InputLabel id="priority">Priority</InputLabel>
                           <Select
                             labelId="demo-multiple-chip-label"
                             id="demo-multiple-chip"
@@ -535,19 +457,17 @@ export default function TableModal({ open, modalToggler, item }: Props) {
                               formik.setFieldValue('priority', e.target.value);
                             }}
                             input={<OutlinedInput id="select-multiple-chip" placeholder="Priority" />}
-                            placeholder='Priority'
+                            placeholder="Priority"
                             renderValue={(selected) =>
                               selected ? (
                                 <Chip
                                   label={selected}
                                   variant="filled"
-                                  color={selected === "MEDIUM" ? "warning" : selected === "LOW" ? "default" : "error"}
+                                  color={selected === 'MEDIUM' ? 'warning' : selected === 'LOW' ? 'default' : 'error'}
                                   size="small"
                                 />
                               ) : (
-                                <p style={{ color: '#999', margin: 0 }}>
-                                  Select Priority
-                                </p>
+                                <p style={{ color: '#999', margin: 0 }}>Select Priority</p>
                               )
                             }
                           >
@@ -561,31 +481,26 @@ export default function TableModal({ open, modalToggler, item }: Props) {
                       </Grid>
                       <Grid item xs={6}>
                         <Stack spacing={1}>
-                          <InputLabel id="status" >Status</InputLabel>
+                          <InputLabel id="status">Status</InputLabel>
                           <Select
                             labelId="demo-multiple-chip-label"
                             id="demo-multiple-chip"
-                            value={formik.values.status }
+                            value={formik.values.status}
                             onChange={(e) => {
                               formik.setFieldValue('status', e.target.value);
                             }}
                             input={<OutlinedInput id="select-multiple-chip" placeholder="Status" />}
-                            placeholder='Status'
+                            placeholder="Status"
                             renderValue={(selected) =>
                               selected ? (
                                 <Chip
                                   label={selected}
                                   variant="filled"
-                                  color={selected === "APPROVED" ? "success" : selected === "PENDING" ? "default" : "error"}
+                                  color={selected === 'APPROVED' ? 'success' : selected === 'PENDING' ? 'default' : 'error'}
                                   size="small"
                                 />
                               ) : (
-                                <Chip
-                                  label="PENDING"
-                                  variant="filled"
-                                  color="default"
-                                  size="small"
-                                />
+                                <Chip label="PENDING" variant="filled" color="default" size="small" />
                               )
                             }
                           >
@@ -603,7 +518,7 @@ export default function TableModal({ open, modalToggler, item }: Props) {
                           <TextField
                             fullWidth
                             id="slaDays"
-                            type='number'
+                            type="number"
                             placeholder="Enter SLA Days"
                             {...getFieldProps('slaDays')}
                             error={Boolean(touched.slaDays && errors.slaDays)}

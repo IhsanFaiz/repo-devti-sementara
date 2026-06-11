@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import { FormControl, Grid, MenuItem, Pagination, Select, SelectChangeEvent, Stack, Typography } from '@mui/material';
+import { FormattedMessage } from 'react-intl';
 import { TableState, Updater } from '@tanstack/react-table';
-import { usePathname, useSearchParams, useRouter } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 
 interface TablePaginationProps {
   setPageSize: (updater: Updater<number>) => void;
@@ -17,67 +18,30 @@ interface TablePaginationProps {
 
 const PAGE_SIZE_OPTIONS = [10, 25, 50, 100] as const;
 
-export default function TablePagination({
+function TablePaginationUI({
   getPageCount,
   setPageIndex,
   setPageSize,
   getState,
-  syncWithUrl = false,
-  pageKey = 'page',
-  limitKey = 'limit'
-}: TablePaginationProps) {
+  handlePageChange,
+  handlePageSizeChange
+}: {
+  getPageCount: () => number;
+  setPageIndex: (updater: Updater<number>) => void;
+  setPageSize: (updater: Updater<number>) => void;
+  getState: () => TableState;
+  handlePageChange: (_: React.ChangeEvent<unknown>, newPage: number) => void;
+  handlePageSizeChange: (event: SelectChangeEvent<number>) => void;
+}) {
   const [open, setOpen] = useState(false);
   const { pageIndex, pageSize } = getState().pagination;
-
-  const searchParams = syncWithUrl ? useSearchParams() : null;
-  const pathname = syncWithUrl ? usePathname() : '';
-  const router = syncWithUrl ? useRouter() : null;
-
-  const pageParam = syncWithUrl && searchParams ? searchParams.get(pageKey) : null;
-  const limitParam = syncWithUrl && searchParams ? searchParams.get(limitKey) : null;
-
-  useEffect(() => {
-    if (!syncWithUrl) return;
-
-    const currentPage = pageParam ? Number(pageParam) : 1;
-    const currentSize = limitParam ? Number(limitParam) : PAGE_SIZE_OPTIONS[0];
-
-    if (pageParam && currentPage - 1 !== pageIndex) {
-      setPageIndex(currentPage - 1);
-    }
-
-    if (limitParam && currentSize !== pageSize) {
-      setPageSize(currentSize);
-    }
-  }, [pageParam, limitParam]);
-
-  const updateURL = (page: number, size: number) => {
-    if (!syncWithUrl || !searchParams || !router) return;
-
-    const params = new URLSearchParams(searchParams);
-    params.set(pageKey, String(page));
-    params.set(limitKey, String(size));
-    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
-  };
-
-  const handlePageChange = (_: React.ChangeEvent<unknown>, newPage: number) => {
-    setPageIndex(newPage - 1);
-    if (syncWithUrl) updateURL(newPage, pageSize);
-  };
-
-  const handlePageSizeChange = (event: SelectChangeEvent<number>) => {
-    const newSize = Number(event.target.value);
-    setPageSize(newSize);
-    setPageIndex(0);
-    if (syncWithUrl) updateURL(1, newSize);
-  };
 
   return (
     <Grid spacing={1} container alignItems="center" justifyContent="space-between" sx={{ width: 'auto' }}>
       <Grid item>
         <Stack direction="row" spacing={2} alignItems="center">
           <Typography variant="body2" color="textSecondary">
-            Rows per page
+            <FormattedMessage id="rows-per-page" />
           </Typography>
           <FormControl sx={{ m: 1 }}>
             <Select
@@ -97,7 +61,7 @@ export default function TablePagination({
             </Select>
           </FormControl>
           <Typography variant="body2" color="textSecondary">
-            Page {pageIndex + 1} of {getPageCount()}
+            <FormattedMessage id="page-of" values={{ page: pageIndex + 1, total: getPageCount() }} />
           </Typography>
         </Stack>
       </Grid>
@@ -115,4 +79,97 @@ export default function TablePagination({
       </Grid>
     </Grid>
   );
+}
+
+function TablePaginationBase({ getPageCount, setPageIndex, setPageSize, getState }: TablePaginationProps) {
+  const { pageSize } = getState().pagination;
+
+  const handlePageChange = (_: React.ChangeEvent<unknown>, newPage: number) => {
+    setPageIndex(newPage - 1);
+  };
+
+  const handlePageSizeChange = (event: SelectChangeEvent<number>) => {
+    const newSize = Number(event.target.value);
+    setPageSize(newSize);
+    setPageIndex(0);
+  };
+
+  return (
+    <TablePaginationUI
+      getPageCount={getPageCount}
+      setPageIndex={setPageIndex}
+      setPageSize={setPageSize}
+      getState={getState}
+      handlePageChange={handlePageChange}
+      handlePageSizeChange={handlePageSizeChange}
+    />
+  );
+}
+
+function TablePaginationWithUrl({
+  getPageCount,
+  setPageIndex,
+  setPageSize,
+  getState,
+  pageKey = 'page',
+  limitKey = 'limit'
+}: TablePaginationProps) {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  const pageParam = searchParams ? searchParams.get(pageKey) : null;
+  const limitParam = searchParams ? searchParams.get(limitKey) : null;
+
+  const { pageIndex, pageSize } = getState().pagination;
+
+  useEffect(() => {
+    const currentPage = pageParam ? Number(pageParam) : 1;
+    const currentSize = limitParam ? Number(limitParam) : PAGE_SIZE_OPTIONS[0];
+
+    if (pageParam && currentPage - 1 !== pageIndex) {
+      setPageIndex(currentPage - 1);
+    }
+
+    if (limitParam && currentSize !== pageSize) {
+      setPageSize(currentSize);
+    }
+  }, [pageParam, limitParam]);
+
+  const updateURL = (page: number, size: number) => {
+    if (!searchParams || !router) return;
+
+    const params = new URLSearchParams(searchParams);
+    params.set(pageKey, String(page));
+    params.set(limitKey, String(size));
+    const currentPath = typeof window !== 'undefined' ? window.location.pathname : '';
+    router.replace(`${currentPath}?${params.toString()}`, { scroll: false });
+  };
+
+  const handlePageChange = (_: React.ChangeEvent<unknown>, newPage: number) => {
+    setPageIndex(newPage - 1);
+    updateURL(newPage, pageSize);
+  };
+
+  const handlePageSizeChange = (event: SelectChangeEvent<number>) => {
+    const newSize = Number(event.target.value);
+    setPageSize(newSize);
+    setPageIndex(0);
+    updateURL(1, newSize);
+  };
+
+  return (
+    <TablePaginationUI
+      getPageCount={getPageCount}
+      setPageIndex={setPageIndex}
+      setPageSize={setPageSize}
+      getState={getState}
+      handlePageChange={handlePageChange}
+      handlePageSizeChange={handlePageSizeChange}
+    />
+  );
+}
+
+export default function TablePagination(props: TablePaginationProps) {
+  const Component = props.syncWithUrl ? TablePaginationWithUrl : TablePaginationBase;
+  return <Component {...props} />;
 }

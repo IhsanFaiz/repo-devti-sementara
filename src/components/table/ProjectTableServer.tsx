@@ -34,14 +34,13 @@ export interface ProjectMember {
 }
 
 export interface ProjectApiResponse {
-  id: number
+  id: number;
   name: string;
   description: string;
   status: string;
   createdAt: Date;
   projectMembers?: ProjectMember[];
 }
-
 
 const ProjectTableServer = () => {
   const [open, setOpen] = useState<boolean>(false);
@@ -52,10 +51,7 @@ const ProjectTableServer = () => {
   const limit = searchParams.get('limit');
   const query = searchParams.get('query');
 
-  const handleMenuOpen = (
-    event: MouseEvent<HTMLButtonElement>,
-    row: ProjectApiResponse
-  ) => {
+  const handleMenuOpen = (event: MouseEvent<HTMLButtonElement>, row: ProjectApiResponse) => {
     event.stopPropagation();
 
     setMenuPosition({
@@ -70,8 +66,6 @@ const ProjectTableServer = () => {
     top: number;
     left: number;
   } | null>(null);
-
-  
 
   const handleMenuClose = () => {
     setMenuPosition(null);
@@ -90,14 +84,13 @@ const ProjectTableServer = () => {
   };
   const [menuItem, setMenuItem] = useState<ProjectApiResponse | null>(null);
 
-  
   const { data: projects, isLoading } = api.project.getPagination.useQuery({
     limit: Number(limit) || 10,
     page: Number(page) || 1,
     search: query || ''
   });
 
-  const router = useRouter()
+  const router = useRouter();
 
   const columns = useMemo<ColumnDef<ProjectApiResponse>[]>(
     () => [
@@ -117,12 +110,14 @@ const ProjectTableServer = () => {
         sortingFn: 'alphanumeric',
         cell: ({ row }) => (
           <Tooltip title={row.original.description}>
-            <div style={{
-              maxWidth: '200px',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap'
-            }}>
+            <div
+              style={{
+                maxWidth: '200px',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap'
+              }}
+            >
               {row.original.description}
             </div>
           </Tooltip>
@@ -132,17 +127,28 @@ const ProjectTableServer = () => {
         header: () => 'Status',
         accessorKey: 'status',
         sortingFn: 'alphanumeric',
-        cell: ({row}) => {
+        cell: ({ row }) => {
           return (
-            <Chip  label={row.original.status} color={row.original.status === "ACTIVE" ? "success" : row.original.status === "DONE" ? "default" : row.original.status === "WAITING" ? "warning" : "error"}></Chip>
-          )
+            <Chip
+              label={row.original.status}
+              color={
+                row.original.status === 'ACTIVE'
+                  ? 'success'
+                  : row.original.status === 'DONE'
+                    ? 'default'
+                    : row.original.status === 'WAITING'
+                      ? 'warning'
+                      : 'error'
+              }
+            ></Chip>
+          );
         }
       },
       {
         header: () => 'Tanggal Dibuat',
         accessorKey: 'createdAt',
         sortingFn: 'datetime',
-        cell: ({row}) => {
+        cell: ({ row }) => {
           return new Date(row.original.createdAt).toLocaleDateString('id-ID', {
             day: '2-digit',
             month: 'long',
@@ -160,10 +166,7 @@ const ProjectTableServer = () => {
           return (
             <>
               <Tooltip title="More">
-                <IconButton
-                  size="small"
-                  onClick={(e: MouseEvent<HTMLButtonElement>) => handleMenuOpen(e, row.original)}
-                >
+                <IconButton size="small" onClick={(e: MouseEvent<HTMLButtonElement>) => handleMenuOpen(e, row.original)}>
                   <More />
                 </IconButton>
               </Tooltip>
@@ -183,29 +186,14 @@ const ProjectTableServer = () => {
   });
 
   const StatCardSkeleton = () => (
-  <MainCard sx={{ height: '100%' }}>
-    <Skeleton
-      animation="wave"
-      variant="text"
-      width={140}
-      height={32}
-    />
+    <MainCard sx={{ height: '100%' }}>
+      <Skeleton animation="wave" variant="text" width={140} height={32} />
 
-    <Skeleton
-      animation="wave"
-      variant="text"
-      width={60}
-      height={50}
-    />
+      <Skeleton animation="wave" variant="text" width={60} height={50} />
 
-    <Skeleton
-      animation="wave"
-      variant="text"
-      width={120}
-      height={20}
-    />
-  </MainCard>
-);
+      <Skeleton animation="wave" variant="text" width={120} height={20} />
+    </MainCard>
+  );
 
   return (
     <>
@@ -232,9 +220,7 @@ const ProjectTableServer = () => {
       ) : (
         <div className="flex flex-col gap-5 lg:grid lg:grid-cols-5">
           <MainCard title="Total Projects" sx={{ height: '100%' }}>
-            <Typography variant="h3">
-              {projects?.total}
-            </Typography>
+            <Typography variant="h3">{projects?.total}</Typography>
             <Typography variant="caption" color="textSecondary">
               Total Number of Projects
             </Typography>
@@ -242,9 +228,7 @@ const ProjectTableServer = () => {
 
           <div className="bg-amber-500 rounded-xl pl-1">
             <MainCard title="Waiting Projects" sx={{ height: '100%' }}>
-              <Typography variant="h3">
-                {projects?.statusCounts.WAITING}
-              </Typography>
+              <Typography variant="h3">{projects?.statusCounts.WAITING}</Typography>
               <Typography variant="caption" color="textSecondary">
                 Total Waiting Projects
               </Typography>
@@ -253,32 +237,25 @@ const ProjectTableServer = () => {
 
           <div className="bg-emerald-500 rounded-xl pl-1">
             <MainCard title="Active Projects" sx={{ height: '100%' }}>
-              <Typography variant="h3">
-                {projects?.statusCounts.ACTIVE}
-              </Typography>
+              <Typography variant="h3">{projects?.statusCounts.ACTIVE}</Typography>
               <Typography variant="caption" color="textSecondary">
                 Total Active Projects
               </Typography>
             </MainCard>
-          </div>  
+          </div>
 
           <div className="bg-blue-500 rounded-xl pl-1">
             <MainCard title="Done Projects" sx={{ height: '100%' }}>
-              <Typography variant="h3">
-                {projects?.statusCounts.DONE}
-              </Typography>
+              <Typography variant="h3">{projects?.statusCounts.DONE}</Typography>
               <Typography variant="caption" color="textSecondary">
                 Total Done Projects
               </Typography>
             </MainCard>
           </div>
 
-
           <div className="bg-red-500 rounded-xl pl-1">
             <MainCard title="Canceled Projects" sx={{ height: '100%' }}>
-              <Typography variant="h3">
-                {projects?.statusCounts.CANCELED}
-              </Typography>
+              <Typography variant="h3">{projects?.statusCounts.CANCELED}</Typography>
               <Typography variant="caption" color="textSecondary">
                 Total Canceled Projects
               </Typography>
@@ -316,7 +293,7 @@ const ProjectTableServer = () => {
             isPending: isLoading,
             isServerPagination: true,
             onRowClick: (row) => {
-              router.push(`project/detail/${row.original.id}`)
+              router.push(`project/detail/${row.original.id}`);
             }
           }}
         />
@@ -343,7 +320,6 @@ const ProjectTableServer = () => {
             Delete
           </MenuItem>
         </Menu>
-
       </MainCard>
       <AlertItemDelete item={selectedItem} open={open} handleClose={() => setOpen(false)} />
       <TableModal open={ItemModal} modalToggler={setItemModal} item={selectedItem} />

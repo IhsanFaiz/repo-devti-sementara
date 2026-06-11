@@ -116,7 +116,7 @@ const Breadcrumbs = ({
             setItem(collapse);
           }
         } else if (collapse.type && collapse.type === 'item') {
-          if (customLocation === collapse.url) {
+          if (customLocation === collapse.url || (collapse.url && customLocation.startsWith(collapse.url + '/'))) {
             setMain(menu);
             setItem(collapse);
           }
@@ -145,7 +145,7 @@ const Breadcrumbs = ({
         <Typography
           variant="body1"
           sx={{ textDecoration: 'none', cursor: 'pointer' }}
-          color={window.location.pathname === main.url ? 'text.secondary' : 'text.primary'}
+          color={location === main.url ? 'text.secondary' : 'text.primary'}
         >
           {icons && <CollapseIcon style={iconSX} />}
           {main.title}

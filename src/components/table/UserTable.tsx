@@ -14,21 +14,20 @@ import { useTableState } from 'hooks/useTableState';
 import TableContent from 'components/table/TableContent';
 import { api } from 'trpc/react';
 import { DebouncedInput } from 'components/third-party/react-table';
-import {  useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 
 // ==============================|| Table-Component ||============================== //
 
 export interface UserApiResponse {
-  id: number
-  email: string,
+  id: number;
+  email: string;
   username: string;
-  roleId: number
+  roleId: number;
   role?: {
     id: number;
     name: string;
-  }
+  };
 }
-
 
 const UserTable = () => {
   const [open, setOpen] = useState<boolean>(false);
@@ -39,10 +38,7 @@ const UserTable = () => {
   const limit = searchParams.get('limit');
   const query = searchParams.get('query');
 
-  const handleMenuOpen = (
-    event: MouseEvent<HTMLButtonElement>,
-    row: UserApiResponse
-  ) => {
+  const handleMenuOpen = (event: MouseEvent<HTMLButtonElement>, row: UserApiResponse) => {
     event.stopPropagation();
 
     setMenuPosition({
@@ -57,8 +53,6 @@ const UserTable = () => {
     top: number;
     left: number;
   } | null>(null);
-
-  
 
   const handleMenuClose = () => {
     setMenuPosition(null);
@@ -79,7 +73,7 @@ const UserTable = () => {
   const { data: users, isLoading } = api.user.getPagination.useQuery({
     limit: Number(limit) || 10,
     page: Number(page) || 1,
-    search: query || '',
+    search: query || ''
   });
 
   const columns = useMemo<ColumnDef<UserApiResponse>[]>(
@@ -116,10 +110,7 @@ const UserTable = () => {
           return (
             <>
               <Tooltip title="More">
-                <IconButton
-                  size="small"
-                  onClick={(e: MouseEvent<HTMLButtonElement>) => handleMenuOpen(e, row.original)}
-                >
+                <IconButton size="small" onClick={(e: MouseEvent<HTMLButtonElement>) => handleMenuOpen(e, row.original)}>
                   <More />
                 </IconButton>
               </Tooltip>
@@ -168,7 +159,7 @@ const UserTable = () => {
           {...{
             table,
             isPending: isLoading,
-            isServerPagination: true,
+            isServerPagination: true
           }}
         />
         <Menu
@@ -194,7 +185,6 @@ const UserTable = () => {
             Delete
           </MenuItem>
         </Menu>
-
       </MainCard>
       <AlertItemDelete item={selectedItem} open={open} handleClose={() => setOpen(false)} />
       <TableModal open={ItemModal} modalToggler={setItemModal} item={selectedItem} />

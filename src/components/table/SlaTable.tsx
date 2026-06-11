@@ -21,56 +21,46 @@ export interface SlaApiRequest {
   status: string;
 }
 
-
 const SlaTable = () => {
-  
   const { data: sla, isLoading } = api.sla.getPagination.useQuery();
 
-  const router = useRouter()
+  const router = useRouter();
 
   const columns = useMemo<ColumnDef<SlaApiRequest>[]>(
     () => [
       {
-            header: () => 'Request Type',
-            accessorKey: 'requestType',
-            cell: ({ row }) => (
-                <Typography>
-                    {row.original.requestType.replace(/_/g, ' ')}
-                </Typography>
-            )
-        },
-        {
-            header: () => 'Total Request',
-            accessorKey: 'totalRequest'
-        },
-        {
-            header: () => '% Meeting SLA Target',
-            accessorKey: 'meetingPercentage',
-            cell: ({ row }) => {
-              return (
-                <Chip label={`${row.original.meetingPercentage}%`} variant='combined' color={row.original.status === "ACHIEVED" ? "success" : "error"}></Chip>
-              )
-            }
-        },
-        {
-            header: () => 'Status',
-            accessorKey: 'status',
-            cell: ({ row }) => (
-                <Chip
-                icon={
-                    row.original.status === "ACHIEVED" 
-                    ? <BadgeCheckIcon />
-                    : <BadgeX />
-                }
-                label={row.original.status}
-                color={
-                    row.original.status === "ACHIEVED"
-                    ? "success"
-                    : "error"
-                }
-                />
-            )
+        header: () => 'Request Type',
+        accessorKey: 'requestType',
+        cell: ({ row }) => <Typography>{row.original.requestType.replace(/_/g, ' ')}</Typography>
+      },
+      {
+        header: () => 'Total Request',
+        accessorKey: 'totalRequest'
+      },
+      {
+        header: () => '% Meeting SLA Target',
+        accessorKey: 'meetingPercentage',
+        cell: ({ row }) => {
+          return (
+            <Chip
+              label={`${row.original.meetingPercentage}%`}
+              variant="combined"
+              color={row.original.status === 'ACHIEVED' ? 'success' : 'error'}
+            ></Chip>
+          );
         }
+      },
+      {
+        header: () => 'Status',
+        accessorKey: 'status',
+        cell: ({ row }) => (
+          <Chip
+            icon={row.original.status === 'ACHIEVED' ? <BadgeCheckIcon /> : <BadgeX />}
+            label={row.original.status}
+            color={row.original.status === 'ACHIEVED' ? 'success' : 'error'}
+          />
+        )
+      }
     ],
     []
   );
@@ -82,7 +72,7 @@ const SlaTable = () => {
   });
 
   return (
-    <>      
+    <>
       <MainCard
         title={
           <Stack sx={{ gap: 3 }}>
@@ -102,7 +92,7 @@ const SlaTable = () => {
             isPending: isLoading,
             isServerPagination: true,
             onRowClick: (row) => {
-              router.push(`sla/detail/${row.original.requestType}`)
+              router.push(`sla/detail/${row.original.requestType}`);
             }
           }}
         />

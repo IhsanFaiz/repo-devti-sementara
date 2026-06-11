@@ -1,6 +1,6 @@
 'use client';
 
-import {  useState } from 'react';
+import { useState } from 'react';
 import { Stack, Typography, Menu, Chip } from '@mui/material';
 import { Tooltip } from '@mui/material';
 import MainCard from 'components/MainCard';
@@ -15,13 +15,12 @@ import { useRouter, useSearchParams } from 'next/navigation';
 // ==============================|| Table-Component ||============================== //
 
 export interface ProjectApiResponse {
-  id: number
+  id: number;
   name: string;
   description: string;
   status: string;
   createdAt: Date;
 }
-
 
 const MyProject = () => {
   const searchParams = useSearchParams();
@@ -34,8 +33,6 @@ const MyProject = () => {
     left: number;
   } | null>(null);
 
-  
-
   const handleMenuClose = () => {
     setMenuPosition(null);
   };
@@ -46,7 +43,7 @@ const MyProject = () => {
     search: query || ''
   });
 
-  const router = useRouter()
+  const router = useRouter();
 
   const columns = useMemo<ColumnDef<ProjectApiResponse>[]>(
     () => [
@@ -66,12 +63,14 @@ const MyProject = () => {
         sortingFn: 'alphanumeric',
         cell: ({ row }) => (
           <Tooltip title={row.original.description}>
-            <div style={{
-              maxWidth: '200px',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap'
-            }}>
+            <div
+              style={{
+                maxWidth: '200px',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap'
+              }}
+            >
               {row.original.description}
             </div>
           </Tooltip>
@@ -81,24 +80,27 @@ const MyProject = () => {
         header: () => 'Status',
         accessorKey: 'status',
         sortingFn: 'alphanumeric',
-        cell: ({row}) => {
+        cell: ({ row }) => {
           return (
-            <Chip  label={row.original.status} color={row.original.status === "ACTIVE" ? "success" : row.original.status === "DONE" ? "default" : "error"}></Chip>
-          )
+            <Chip
+              label={row.original.status}
+              color={row.original.status === 'ACTIVE' ? 'success' : row.original.status === 'DONE' ? 'default' : 'error'}
+            ></Chip>
+          );
         }
       },
       {
         header: () => 'Tanggal Dibuat',
         accessorKey: 'createdAt',
         sortingFn: 'datetime',
-        cell: ({row}) => {
+        cell: ({ row }) => {
           return new Date(row.original.createdAt).toLocaleDateString('id-ID', {
             day: '2-digit',
             month: 'long',
             year: 'numeric'
           });
         }
-      },
+      }
     ],
     []
   );
@@ -131,7 +133,7 @@ const MyProject = () => {
             isPending: isLoading,
             isServerPagination: true,
             onRowClick: (row) => {
-              router.push(`my-project/detail/${row.original.id}`)
+              router.push(`my-project/detail/${row.original.id}`);
             }
           }}
         />
@@ -147,9 +149,7 @@ const MyProject = () => {
                 }
               : undefined
           }
-        >
-        </Menu>
-
+        ></Menu>
       </MainCard>
     </>
   );

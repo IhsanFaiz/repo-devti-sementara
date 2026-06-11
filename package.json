@@ -64,6 +64,7 @@
     "react-intl": "^6.5.5",
     "react-slick": "^0.29.0",
     "react-syntax-highlighter": "^15.6.1",
+    "recharts": "^3.8.1",
     "sharp": "^0.34.4",
     "simplebar-react": "^3.2.4",
     "stylis-plugin-rtl": "^2.1.1",

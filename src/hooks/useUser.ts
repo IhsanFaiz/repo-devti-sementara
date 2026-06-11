@@ -11,7 +11,7 @@ interface UserProps {
 
 const useUser = () => {
   const { data: session } = useSession();
-  
+
   if (session?.user) {
     const user = session.user;
 

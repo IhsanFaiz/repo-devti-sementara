@@ -20,24 +20,23 @@ import { Skeleton } from '@mui/material';
 // ==============================|| Table-Component ||============================== //
 
 export interface RequestApiResponse {
-    id              : number;
-    references      : string;
-    status          : string;
-    applicationName : string | null;
-    version         : string | null;
-    description     : string | null;
-    via             : string | null,
-    psal            : string | null,
-    department      : string | null,
-    category        : string | null,
-    framework       : string | null,
-    groupType       : string | null,
-    serviceType     : string | null,
-    subServiceType  : string | null,
-    priority        : string | null,
-    slaDays         : number | null,
+  id: number;
+  references: string;
+  status: string;
+  applicationName: string | null;
+  version: string | null;
+  description: string | null;
+  via: string | null;
+  psal: string | null;
+  department: string | null;
+  category: string | null;
+  framework: string | null;
+  groupType: string | null;
+  serviceType: string | null;
+  subServiceType: string | null;
+  priority: string | null;
+  slaDays: number | null;
 }
-
 
 const RequestTableServer = () => {
   const [open, setOpen] = useState<boolean>(false);
@@ -48,10 +47,7 @@ const RequestTableServer = () => {
   const limit = searchParams.get('limit');
   const query = searchParams.get('query');
 
-  const handleMenuOpen = (
-    event: MouseEvent<HTMLButtonElement>,
-    row: RequestApiResponse
-  ) => {
+  const handleMenuOpen = (event: MouseEvent<HTMLButtonElement>, row: RequestApiResponse) => {
     event.stopPropagation();
 
     setMenuPosition({
@@ -66,8 +62,6 @@ const RequestTableServer = () => {
     top: number;
     left: number;
   } | null>(null);
-
-  
 
   const handleMenuClose = () => {
     setMenuPosition(null);
@@ -86,14 +80,13 @@ const RequestTableServer = () => {
   };
   const [menuItem, setMenuItem] = useState<RequestApiResponse | null>(null);
 
-  
   const { data: request, isLoading } = api.request.getPagination.useQuery({
     limit: Number(limit) || 10,
     page: Number(page) || 1,
-    search: query || '',
+    search: query || ''
   });
 
-  const router = useRouter()
+  const router = useRouter();
 
   const columns = useMemo<ColumnDef<RequestApiResponse>[]>(
     () => [
@@ -108,12 +101,14 @@ const RequestTableServer = () => {
         sortingFn: 'alphanumeric',
         cell: ({ row }) => (
           <Tooltip title={row.original.references}>
-            <div style={{
-              maxWidth: '200px',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap'
-            }}>
+            <div
+              style={{
+                maxWidth: '200px',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap'
+              }}
+            >
               {row.original.references}
             </div>
           </Tooltip>
@@ -125,12 +120,14 @@ const RequestTableServer = () => {
         sortingFn: 'alphanumeric',
         cell: ({ row }) => (
           <Tooltip title={row.original.applicationName}>
-            <div style={{
-              maxWidth: '200px',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap'
-            }}>
+            <div
+              style={{
+                maxWidth: '200px',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap'
+              }}
+            >
               {row.original.applicationName}
             </div>
           </Tooltip>
@@ -140,20 +137,21 @@ const RequestTableServer = () => {
         header: () => 'Status',
         accessorKey: 'status',
         sortingFn: 'alphanumeric',
-        cell: ({row}) => {
+        cell: ({ row }) => {
           return (
-            <Chip  label={row.original.status} color={row.original.status === "APPROVED" ? "success" : row.original.status === "PENDING" ? "default" : "error"}></Chip>
-          )
+            <Chip
+              label={row.original.status}
+              color={row.original.status === 'APPROVED' ? 'success' : row.original.status === 'PENDING' ? 'default' : 'error'}
+            ></Chip>
+          );
         }
       },
       {
         header: () => 'Version',
         accessorKey: 'version',
         sortingFn: 'alphanumeric',
-        cell: ({row}) => {
-          return (
-            <Chip  label={row.original.version} color="primary"></Chip>
-          )
+        cell: ({ row }) => {
+          return <Chip label={row.original.version} color="primary"></Chip>;
         }
       },
       {
@@ -166,10 +164,7 @@ const RequestTableServer = () => {
           return (
             <>
               <Tooltip title="More">
-                <IconButton
-                  size="small"
-                  onClick={(e: MouseEvent<HTMLButtonElement>) => handleMenuOpen(e, row.original)}
-                >
+                <IconButton size="small" onClick={(e: MouseEvent<HTMLButtonElement>) => handleMenuOpen(e, row.original)}>
                   <More />
                 </IconButton>
               </Tooltip>
@@ -190,92 +185,69 @@ const RequestTableServer = () => {
 
   const StatCardSkeleton = () => (
     <MainCard sx={{ height: '100%' }}>
-      <Skeleton
-        animation="wave"
-        variant="text"
-        width={140}
-        height={32}
-      />
-  
-      <Skeleton
-        animation="wave"
-        variant="text"
-        width={60}
-        height={50}
-      />
-  
-      <Skeleton
-        animation="wave"
-        variant="text"
-        width={120}
-        height={20}
-      />
+      <Skeleton animation="wave" variant="text" width={140} height={32} />
+
+      <Skeleton animation="wave" variant="text" width={60} height={50} />
+
+      <Skeleton animation="wave" variant="text" width={120} height={20} />
     </MainCard>
   );
 
   return (
     <>
-    {isLoading ? (
-            <div className="flex flex-col gap-5 lg:grid lg:grid-cols-4">
-              <StatCardSkeleton />
-    
-              <div className="bg-emerald-500 rounded-xl pl-1">
-                <StatCardSkeleton />
-              </div>
-    
-              <div className="bg-blue-500 rounded-xl pl-1">
-                <StatCardSkeleton />
-              </div>
-    
-              <div className="bg-red-500 rounded-xl pl-1">
-                <StatCardSkeleton />
-              </div>
-            </div>
-          ) : (
-            <div className="flex flex-col gap-5 lg:grid lg:grid-cols-4">
-              <MainCard title="Total Request" sx={{ height: '100%' }}>
-                <Typography variant="h3">
-                  {request?.total}
-                </Typography>
-                <Typography variant="caption" color="textSecondary">
-                  Total Number of Request
-                </Typography>
-              </MainCard>
-    
-              <div className="bg-emerald-500 rounded-xl pl-1">
-                <MainCard title="Approved Request" sx={{ height: '100%' }}>
-                  <Typography variant="h3">
-                    {request?.statusCounts.APPROVED}
-                  </Typography>
-                  <Typography variant="caption" color="textSecondary">
-                    Total Approved Request
-                  </Typography>
-                </MainCard>
-              </div>
-    
-              <div className="bg-blue-500 rounded-xl pl-1">
-                <MainCard title="Pending Request" sx={{ height: '100%' }}>
-                  <Typography variant="h3">
-                    {request?.statusCounts.PENDING}
-                  </Typography>
-                  <Typography variant="caption" color="textSecondary">
-                    Total Pending Request
-                  </Typography>
-                </MainCard>
-              </div>
-    
-              <div className="bg-red-500 rounded-xl pl-1">
-                <MainCard title="Rejected Request" sx={{ height: '100%' }}>
-                  <Typography variant="h3">
-                    {request?.statusCounts.REJECTED}
-                  </Typography>
-                  <Typography variant="caption" color="textSecondary">
-                    Total Rejected Request
-                  </Typography>
-                </MainCard>
-              </div>
-            </div>
-          )}
+      {isLoading ? (
+        <div className="flex flex-col gap-5 lg:grid lg:grid-cols-4">
+          <StatCardSkeleton />
+
+          <div className="bg-emerald-500 rounded-xl pl-1">
+            <StatCardSkeleton />
+          </div>
+
+          <div className="bg-blue-500 rounded-xl pl-1">
+            <StatCardSkeleton />
+          </div>
+
+          <div className="bg-red-500 rounded-xl pl-1">
+            <StatCardSkeleton />
+          </div>
+        </div>
+      ) : (
+        <div className="flex flex-col gap-5 lg:grid lg:grid-cols-4">
+          <MainCard title="Total Request" sx={{ height: '100%' }}>
+            <Typography variant="h3">{request?.total}</Typography>
+            <Typography variant="caption" color="textSecondary">
+              Total Number of Request
+            </Typography>
+          </MainCard>
+
+          <div className="bg-emerald-500 rounded-xl pl-1">
+            <MainCard title="Approved Request" sx={{ height: '100%' }}>
+              <Typography variant="h3">{request?.statusCounts.APPROVED}</Typography>
+              <Typography variant="caption" color="textSecondary">
+                Total Approved Request
+              </Typography>
+            </MainCard>
+          </div>
+
+          <div className="bg-blue-500 rounded-xl pl-1">
+            <MainCard title="Pending Request" sx={{ height: '100%' }}>
+              <Typography variant="h3">{request?.statusCounts.PENDING}</Typography>
+              <Typography variant="caption" color="textSecondary">
+                Total Pending Request
+              </Typography>
+            </MainCard>
+          </div>
+
+          <div className="bg-red-500 rounded-xl pl-1">
+            <MainCard title="Rejected Request" sx={{ height: '100%' }}>
+              <Typography variant="h3">{request?.statusCounts.REJECTED}</Typography>
+              <Typography variant="caption" color="textSecondary">
+                Total Rejected Request
+              </Typography>
+            </MainCard>
+          </div>
+        </div>
+      )}
       <MainCard
         title={
           <Stack sx={{ gap: 3 }}>
@@ -293,7 +265,7 @@ const RequestTableServer = () => {
                 }}
                 size="large"
               >
-                Add App Request 
+                Add App Request
               </Button>
             </Stack>
           </Stack>
@@ -306,7 +278,7 @@ const RequestTableServer = () => {
             isPending: isLoading,
             isServerPagination: true,
             onRowClick: (row) => {
-              router.push(`request/detail/${row.original.id}`)
+              router.push(`request/detail/${row.original.id}`);
             }
           }}
         />
@@ -333,7 +305,6 @@ const RequestTableServer = () => {
             Delete
           </MenuItem>
         </Menu>
-
       </MainCard>
       <AlertItemDelete item={selectedItem} open={open} handleClose={() => setOpen(false)} />
       <TableModal open={ItemModal} modalToggler={setItemModal} item={selectedItem} />

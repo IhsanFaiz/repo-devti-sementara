@@ -54,10 +54,10 @@ function getInitialValues(item: ProjectApiResponse | null) {
 export default function TableModal({ open, modalToggler, item }: Props) {
   const ItemSchema = Yup.object().shape({
     name: Yup.string().required('Name is required'),
-    description: Yup.string().required('Description is required'),
+    description: Yup.string().required('Description is required')
   });
 
-  const {data: members} = api.user.getAll.useQuery();
+  const { data: members } = api.user.getAll.useQuery();
   const { data: projectDetail } = api.project.getById.useQuery(
     { id: item?.id || 0 },
     {
@@ -67,12 +67,7 @@ export default function TableModal({ open, modalToggler, item }: Props) {
 
   const editingItem = projectDetail ?? item;
 
-  const projectStatus = [
-    'ACTIVE',
-    'DONE',
-    'CANCELED',
-    'WAITING'
-  ];
+  const projectStatus = ['ACTIVE', 'DONE', 'CANCELED', 'WAITING'];
 
   const [openAlert, setOpenAlert] = useState(false);
 
@@ -142,7 +137,7 @@ export default function TableModal({ open, modalToggler, item }: Props) {
     enableReinitialize: true,
     onSubmit: async (values, { setSubmitting }) => {
       try {
-        if (item) await updateProject.mutateAsync({...values, id: item?.id! });
+        if (item) await updateProject.mutateAsync({ ...values, id: item?.id! });
         else await createProject.mutateAsync(values);
       } catch (error) {
         console.error('Error submitting form:', error);
@@ -204,7 +199,7 @@ export default function TableModal({ open, modalToggler, item }: Props) {
                       </Grid>
                       <Grid item xs={6}>
                         <Stack spacing={1}>
-                          <InputLabel id="assign-member" >Assign Member</InputLabel>
+                          <InputLabel id="assign-member">Assign Member</InputLabel>
                           <Select
                             labelId="demo-multiple-chip-label"
                             id="demo-multiple-chip"
@@ -228,7 +223,7 @@ export default function TableModal({ open, modalToggler, item }: Props) {
                               }
                             }}
                             input={<OutlinedInput id="select-multiple-chip" placeholder="Assign Member" />}
-                            placeholder='Assign Member'
+                            placeholder="Assign Member"
                             renderValue={(selected) => {
                               const arr = Array.isArray(selected) ? selected : [];
                               return arr.length > 0 ? (
@@ -261,7 +256,7 @@ export default function TableModal({ open, modalToggler, item }: Props) {
                       </Grid>
                       <Grid item xs={6}>
                         <Stack spacing={1}>
-                          <InputLabel id="status" >Status</InputLabel>
+                          <InputLabel id="status">Status</InputLabel>
                           <Select
                             labelId="demo-multiple-chip-label"
                             id="demo-multiple-chip"
@@ -270,19 +265,25 @@ export default function TableModal({ open, modalToggler, item }: Props) {
                               formik.setFieldValue('status', e.target.value);
                             }}
                             input={<OutlinedInput id="select-multiple-chip" placeholder="Status" />}
-                            placeholder='Status'
+                            placeholder="Status"
                             renderValue={(selected) =>
                               selected ? (
                                 <Chip
                                   label={selected}
                                   variant="filled"
-                                  color={selected === "ACTIVE" ? "success" : selected === "DONE" ? "default" : selected === "WAITING" ? "warning" : "error"}
+                                  color={
+                                    selected === 'ACTIVE'
+                                      ? 'success'
+                                      : selected === 'DONE'
+                                        ? 'default'
+                                        : selected === 'WAITING'
+                                          ? 'warning'
+                                          : 'error'
+                                  }
                                   size="small"
                                 />
                               ) : (
-                                <p style={{ color: '#999', margin: 0 }}>
-                                  Select Status
-                                </p>
+                                <p style={{ color: '#999', margin: 0 }}>Select Status</p>
                               )
                             }
                           >

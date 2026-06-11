@@ -4,7 +4,7 @@ import Avatar from 'components/@extended/Avatar';
 import { PopupTransition } from 'components/@extended/Transitions';
 import { ThemeMode } from 'types/config';
 import { Trash } from 'iconsax-react';
-import {ProjectApiResponse} from 'components/table/ProjectTableServer';
+import { ProjectApiResponse } from 'components/table/ProjectTableServer';
 import { openSnackbar } from 'api/snackbar';
 import { SnackbarProps } from 'types/snackbar';
 import { api } from 'trpc/react';

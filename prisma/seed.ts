@@ -1,7 +1,8 @@
 import { PrismaClient } from '../generated/prisma'; // Ensure this matches your schema output path
 import { PrismaPg } from '@prisma/adapter-pg';
 import bcrypt from 'bcryptjs';
-
+import * as fs from 'fs';
+import * as path from 'path';
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
 
 const prisma = new PrismaClient({ adapter });
@@ -145,6 +146,98 @@ async function main() {
     
     
     
+  
+    
+  console.log('🌱 Clearing existing Employees...');
+  await prisma.employee.deleteMany();
+
+  console.log('🌱 Seeding Employees from CSVs...');
+
+  async function seedEmployees(csvFilename: string) {
+    const csvPath = path.join(__dirname, '../', csvFilename);
+    if (!fs.existsSync(csvPath)) {
+      console.log('⚠️ Employee CSV not found at:', csvPath);
+      return;
+    }
+    const csvContent = fs.readFileSync(csvPath, 'utf8');
+    const lines = csvContent.split('\n').filter(line => line.trim() !== '');
+    if (lines.length < 2) return;
+    
+    const headers = lines[0].split(';').map(h => h.trim());
+    const nameIdx = headers.indexOf('Nama Lengkap');
+    const posLamaIdx = headers.indexOf('Posisi SOTK Lama');
+    const posBaruIdx = headers.indexOf('Posisi SOTK Baru');
+    const tglMulaiIdx = headers.indexOf('Tanggal Mulai Bekerja');
+    const statusIdx = headers.indexOf('Status Kepegawaian');
+    const ketIdx = headers.indexOf('Keterangan');
+    const jobDescIdx = headers.indexOf('Job Desc');
+    const nipIdx = headers.indexOf('NIP');
+    const tglKetIdx = headers.findIndex(h => h.toLowerCase().includes('tanggal keterangan'));
+
+    for (let i = 1; i < lines.length; i++) {
+      const parts = lines[i].split(';');
+      if (parts.length > nameIdx) {
+        const fullName = parts[nameIdx]?.trim() || '';
+        if (!fullName || fullName === '-') continue;
+
+        const firstSpaceIndex = fullName.indexOf(' ');
+        let firstName = fullName;
+        let lastName = '';
+        if (firstSpaceIndex !== -1) {
+          firstName = fullName.substring(0, firstSpaceIndex);
+          lastName = fullName.substring(firstSpaceIndex + 1);
+        }
+
+        const rawDate = parts[tglMulaiIdx]?.trim() || '';
+        let startWorking = new Date();
+        if (rawDate && rawDate !== '-') {
+          const dateParts = rawDate.split('-');
+          if (dateParts.length === 3) {
+            const day = dateParts[0].padStart(2, '0');
+            const monthMap: Record<string, string> = {
+              'Jan': '01', 'Feb': '02', 'Mar': '03', 'Apr': '04', 'Mei': '05', 'Jun': '06',
+              'Jul': '07', 'Agu': '08', 'Sep': '09', 'Okt': '10', 'Nov': '11', 'Des': '12'
+            };
+            const monthStr = dateParts[1];
+            const month = monthMap[monthStr] || '01';
+            let year = parseInt(dateParts[2]);
+            if (year < 100) year += 2000;
+            startWorking = new Date(`${year}-${month}-${day}T00:00:00Z`);
+          }
+        }
+
+        const keterangan = parts[ketIdx]?.trim();
+        const statusKepegawaian = parts[statusIdx]?.trim() || 'Pegawai';
+        const previousPosition = parts[posLamaIdx]?.trim();
+        const currentPosition = parts[posBaruIdx]?.trim();
+        const jobDesc = jobDescIdx !== -1 ? parts[jobDescIdx]?.trim() : null;
+        const nip = nipIdx !== -1 ? parts[nipIdx]?.trim() : null;
+        const keteranganDate = tglKetIdx !== -1 ? parts[tglKetIdx]?.trim() : null;
+
+        await prisma.employee.create({
+          data: {
+            firstName,
+            lastName,
+            startWorking,
+            status: (keterangan && keterangan !== '-' && keterangan !== '') ? keterangan : 'Aktif',
+            previousPosition: previousPosition === '-' || previousPosition === '' ? null : previousPosition,
+            currentPosition: currentPosition === '-' || currentPosition === '' ? null : currentPosition,
+            employeeType: statusKepegawaian,
+            jobDesc: jobDesc === '-' || jobDesc === '' ? null : jobDesc,
+            nip: nip === '-' || nip === '' ? null : nip,
+            keteranganDate: keteranganDate === '-' || keteranganDate === '' ? null : keteranganDate
+          }
+        });
+      }
+    }
+    console.log(`✅ Seeded: ${csvFilename}`);
+  }
+
+  await seedEmployees('src/components/table/Data Kepegawaian DevTI(Tenaga Lepas Harian).csv');
+  await seedEmployees('Data Kepegawaian DevTI(Profesional).csv');
+  await seedEmployees('Data Kepegawaian DevTI(Pegawai Tetap) (1).csv');
+  await seedEmployees('Data Kepegawaian DevTI(Magang Akademik).csv');
+
   
   console.log('✅ Seeding finished.');
 }

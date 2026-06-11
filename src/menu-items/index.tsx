@@ -23,16 +23,18 @@ export const getMenuByRole = (menu: { items: NavItemType[] }, userRole?: string)
   const allowedPaths = roleAccess[userRole as keyof typeof roleAccess] || [];
 
   return {
-    items: menu.items.map((group) => ({
-      ...group,
-      children: group.children?.filter((item) => {
-        // Check if the path is in the allowed paths
-        return allowedPaths.includes(item.url || '');
+    items: menu.items
+      .map((group) => ({
+        ...group,
+        children: group.children?.filter((item) => {
+          // Check if the path is in the allowed paths
+          return allowedPaths.includes(item.url || '');
+        })
+      }))
+      .filter((group) => {
+        // Filter out groups that have no children after filtering
+        return group.children && group.children.length > 0;
       })
-    })).filter((group) => {
-      // Filter out groups that have no children after filtering
-      return group.children && group.children.length > 0;
-    })
   };
 };
 

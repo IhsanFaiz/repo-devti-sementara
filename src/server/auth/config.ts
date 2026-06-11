@@ -1,7 +1,7 @@
 import { NextAuthConfig, type DefaultSession } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { prisma } from 'lib/prisma';
-import bcrypt from 'bcryptjs'
+import bcrypt from 'bcryptjs';
 // import { AxiosResponse } from 'axios';
 // import { axiosLogin } from 'utils/axios'; // Ensure this path matches
 // import endpoints from 'utils/endpoints'; // Ensure this path matches
@@ -99,7 +99,6 @@ export const authConfig = {
       },
       async authorize(credentials) {
         try {
-
           // Note: In v5, credentials properties are unknown by default, so we cast strings
           const username = credentials?.username as string;
           const password = credentials?.password as string;
@@ -111,20 +110,20 @@ export const authConfig = {
             include: {
               role: true
             }
-          })
+          });
 
-          const isValid = await bcrypt.compare(password, user?.password as string)
+          const isValid = await bcrypt.compare(password, user?.password as string);
 
-          if(!isValid){
-            throw new Error("Invalid username or password")
+          if (!isValid) {
+            throw new Error('Invalid username or password');
           }
 
-          return{
+          return {
             id: user?.id.toString(),
             name: user?.username,
             role: user?.role.name,
             email: user?.email
-          }
+          };
         } catch (e: any) {
           const errorMessage = e?.response?.data?.message || e.message || 'Something went wrong!';
           // In v5, throwing an Error in authorize sends the user to the error page with ?error=errorMessage

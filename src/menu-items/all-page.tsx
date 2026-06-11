@@ -2,7 +2,7 @@
 import { FormattedMessage } from 'react-intl';
 
 // ASSETS
-import { DocumentCode2, TableDocument, Paperclip2, Profile, } from 'iconsax-react';
+import { DocumentCode2, TableDocument, Paperclip2, Profile } from 'iconsax-react';
 import { Users2, Compass, FileText, BriefcaseBusiness, ClipboardListIcon, FileChartColumnIcon, FileBadge } from 'lucide-react';
 
 // TYPE
@@ -20,7 +20,7 @@ const icons = {
   selection: ClipboardListIcon,
   team: BriefcaseBusiness,
   request: FileChartColumnIcon,
-  sla: FileBadge,
+  sla: FileBadge
 };
 
 // ==============================|| MENU ITEMS - SAMPLE PAGE ||============================== //
@@ -30,8 +30,7 @@ const allPages: NavItemType = {
   title: <FormattedMessage id="menu" />,
   type: 'group',
   children: [
-
-// ==============================|| MENU ITEMS - DEVTI DEVELOPMENT ||============================== //
+    // ==============================|| MENU ITEMS - DEVTI DEVELOPMENT ||============================== //
 
     {
       id: 'dashboard',
@@ -76,44 +75,93 @@ const allPages: NavItemType = {
       url: '/my-project'
     },
 
-
-
-// ==============================|| MENU ITEMS - DEVTI GUIDELINES ||============================== //
+    // ==============================|| MENU ITEMS - DEVTI GUIDELINES ||============================== //
 
     {
       id: 'applicant',
       title: <FormattedMessage id="applicant" />,
-      type: 'item',
+      type: 'collapse',
       icon: icons.applicant,
-      url: '/applicant'
+      url: '/applicant',
+      breadcrumbs: true,
+      children: [
+        {
+          id: 'add-applicant',
+          title: <FormattedMessage id="add-applicant" />,
+          type: 'item',
+          url: '/applicant/add'
+        },
+        {
+          id: 'detail-applicant',
+          title: <FormattedMessage id="detail-applicant" />,
+          type: 'item',
+          url: '/applicant/detail'
+        }
+      ]
     },
     {
       id: 'selection',
       title: <FormattedMessage id="selection" />,
-      type: 'item',
+      type: 'collapse',
       icon: icons.selection,
-      url: '/selection'
+      url: '/selection',
+      breadcrumbs: true,
+      children: [
+        {
+          id: 'detail-selection',
+          title: <FormattedMessage id="detail-selection" />,
+          type: 'item',
+          url: '/selection/detail'
+        }
+      ]
     },
     {
       id: 'onboarding',
       title: <FormattedMessage id="onboarding" />,
-      type: 'item',
+      type: 'collapse',
       icon: icons.onboarding,
-      url: '/onboarding'
+      url: '/onboarding',
+      breadcrumbs: true,
+      children: [
+        {
+          id: 'detail-onboarding',
+          title: <FormattedMessage id="detail-onboarding" />,
+          type: 'item',
+          url: '/onboarding/detail'
+        }
+      ]
     },
     {
       id: 'employee',
       title: <FormattedMessage id="employee" />,
-      type: 'item',
+      type: 'collapse',
       icon: icons.employee,
-      url: '/employee'
+      url: '/employee',
+      breadcrumbs: true,
+      children: [
+        {
+          id: 'add-employee',
+          title: <FormattedMessage id="add-employee" />,
+          type: 'item',
+          url: '/employee/add'
+        }
+      ]
     },
     {
       id: 'team&project',
       title: <FormattedMessage id="Team & Project" />,
-      type: 'item',
+      type: 'collapse',
       icon: icons.team,
-      url: '/team'
+      url: '/team',
+      breadcrumbs: true,
+      children: [
+        {
+          id: 'add-team-project',
+          title: <FormattedMessage id="Tambah Team & Project" />,
+          type: 'item',
+          url: '/team/add'
+        }
+      ]
     },
     {
       id: 'taskList',
@@ -121,7 +169,7 @@ const allPages: NavItemType = {
       type: 'item',
       icon: icons.applicant,
       url: '/task-list'
-    },
+    }
   ]
 };
 

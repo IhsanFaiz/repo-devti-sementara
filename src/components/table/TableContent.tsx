@@ -10,6 +10,7 @@ import { tableCellClasses } from '@mui/material/TableCell';
 import ScrollX from 'components/ScrollX';
 import { HeaderSort, RowSelection } from 'components/third-party/react-table';
 import { Fragment, ReactNode } from 'react';
+import { FormattedMessage } from 'react-intl';
 
 type TableContentProps<TData> = {
   table: TableType<TData>;
@@ -17,6 +18,7 @@ type TableContentProps<TData> = {
   isPending?: boolean;
   isServerPagination?: boolean;
   onRowClick?: (row: Row<TData>) => void;
+  isRowClickable?: (row: Row<TData>) => boolean;
   expandedComponent?: (props: { row: Row<TData> }) => ReactNode;
 };
 
@@ -26,6 +28,7 @@ export default function TableContent<TData>({
   isServerPagination,
   rowSelection,
   onRowClick,
+  isRowClickable,
   expandedComponent
 }: TableContentProps<TData>) {
   const StyledTableCell = styled(TableCell)(() => ({
@@ -62,7 +65,17 @@ export default function TableContent<TData>({
                 {table.getRowModel().rows.length > 0 ? (
                   table.getRowModel().rows.map((row) => (
                     <Fragment key={row.id}>
-                      <TableRow key={row.id} hover onClick={() => onRowClick?.(row)} sx={{cursor: onRowClick ? 'pointer' : 'default',}}>
+                      <TableRow
+                        hover
+                        onClick={() => {
+                          if (!isRowClickable || isRowClickable(row)) {
+                            onRowClick?.(row);
+                          }
+                        }}
+                        sx={{
+                          cursor: onRowClick && (!isRowClickable || isRowClickable(row)) ? 'pointer' : 'default'
+                        }}
+                      >
                         {row.getVisibleCells().map((cell) => (
                           <StyledTableCell key={cell.id} {...cell.column.columnDef.meta}>
                             {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -81,7 +94,7 @@ export default function TableContent<TData>({
                 ) : (
                   <TableRow>
                     <TableCell colSpan={12} sx={{ textAlign: 'center', p: 2 }}>
-                      No data found
+                      <FormattedMessage id="no-data-found" />
                     </TableCell>
                   </TableRow>
                 )}

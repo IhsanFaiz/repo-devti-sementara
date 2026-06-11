@@ -17,14 +17,14 @@ const LogoIcon = () => {
 
   const logoIcon = withBasePath('/assets/images/auth/situ-icon.svg');
   return (
-   /**
-    * if you want to use image instead of svg uncomment following, and comment out <svg> element.
-    *
-    * <img src={theme.palette.mode === ThemeMode.DARK ? logoIconDark : logoIcon} alt="icon logo" width="100" />
-    *
-    */
+    /**
+     * if you want to use image instead of svg uncomment following, and comment out <svg> element.
+     *
+     * <img src={theme.palette.mode === ThemeMode.DARK ? logoIconDark : logoIcon} alt="icon logo" width="100" />
+     *
+     */
 
-   <img src={logoIcon} alt="icon logo" width="30" />
+    <img src={logoIcon} alt="icon logo" width="30" />
   );
 };
 

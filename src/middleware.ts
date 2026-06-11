@@ -5,8 +5,8 @@ import { getToken } from 'next-auth/jwt';
 const roleAccess: Record<string, string[]> = {
   admin: ['/dashboard', '/project', '/user', '/project/detail', '/request', '/sla'],
   user: ['/dashboard', '/my-project', '/project/detail'],
-  'admin employee': ['/dashboard', '/employee', '/team', '/applicant', '/selection', '/onboarding',],
-  'user employee': ['/dashboard', '/task-list', '/team'],
+  'admin employee': ['/dashboard', '/employee', '/team', '/applicant', '/selection', '/onboarding'],
+  'user employee': ['/dashboard', '/task-list', '/team']
 };
 
 export async function middleware(req: NextRequest) {
@@ -15,19 +15,19 @@ export async function middleware(req: NextRequest) {
   if (pathname.startsWith('/api')) {
     return NextResponse.next();
   }
-  
+
   // List of public routes that don't require authentication
   const publicRoutes = ['/login', '/register', '/forgot-password', '/api/auth'];
-  
+
   // Check if route is public
-  if (publicRoutes.some(route => pathname.startsWith(route))) {
+  if (publicRoutes.some((route) => pathname.startsWith(route))) {
     return NextResponse.next();
   }
 
   // Get token from request
-  const token = await getToken({ 
-    req, 
-    secret: process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET 
+  const token = await getToken({
+    req,
+    secret: process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET
   });
 
   // Redirect to login if no token
@@ -45,7 +45,7 @@ export async function middleware(req: NextRequest) {
   }
 
   // Check if user has access to the requested path
-  const hasAccess = allowedPaths.some(path => {
+  const hasAccess = allowedPaths.some((path) => {
     // Exact match
     if (path === pathname) return true;
     // Check if path starts with allowed path (for nested routes)
@@ -78,6 +78,6 @@ export const config = {
      * - favicon.ico (favicon file)
      * - public files
      */
-    '/((?!_next/static|_next/image|favicon.ico|public|assets|uploads).*)',
-  ],
+    '/((?!_next/static|_next/image|favicon.ico|public|assets|uploads).*)'
+  ]
 };

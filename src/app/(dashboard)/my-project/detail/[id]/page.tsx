@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import { Stack } from '@mui/material';
 import { DetailView } from 'views/other/project/detail/user/detail';

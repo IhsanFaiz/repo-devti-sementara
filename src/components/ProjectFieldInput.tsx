@@ -1,12 +1,6 @@
 'use client';
 
-import {
-  Button,
-  Chip,
-  Stack,
-  TextField,
-  Typography
-} from '@mui/material';
+import { Button, Chip, Stack, TextField, Typography } from '@mui/material';
 import { CloudUpload, FileText } from 'lucide-react';
 
 import MainCard from 'components/MainCard';
@@ -25,10 +19,7 @@ interface Props {
 
   existingValue?: string | null;
 
-  onSave: (
-    fieldId: number,
-    value: string | File
-  ) => Promise<void>;
+  onSave: (fieldId: number, value: string | File) => Promise<void>;
 }
 
 interface DropzoneProps {
@@ -47,9 +38,9 @@ function FileDropzone({ accept, selectedFile, onFileSelect, type, previewUrl, ex
   const handleDrag = (e: DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (e.type === "dragenter" || e.type === "dragover") {
+    if (e.type === 'dragenter' || e.type === 'dragover') {
       setIsDragActive(true);
-    } else if (e.type === "dragleave") {
+    } else if (e.type === 'dragleave') {
       setIsDragActive(false);
     }
   };
@@ -86,11 +77,11 @@ function FileDropzone({ accept, selectedFile, onFileSelect, type, previewUrl, ex
             if (file) onFileSelect(file);
           }}
         />
-        
+
         <div className="p-3 bg-red-50 rounded-full text-red-600 mb-3">
           <CloudUpload size={28} />
         </div>
-        
+
         <Typography color="textSecondary" className=" font-medium text-center text-sm md:text-base">
           Klik untuk unggah atau seret file ke sini
         </Typography>
@@ -117,10 +108,7 @@ function FileDropzone({ accept, selectedFile, onFileSelect, type, previewUrl, ex
               key={previewUrl} // PERBAIKAN: memaksa video reload jika src berganti
               className="max-h-20 rounded-lg w-full shadow-sm border border-gray-700"
             >
-              <source 
-                src={previewUrl} 
-                type={selectedFile ? selectedFile.type : 'video/mp4'} 
-              />
+              <source src={previewUrl} type={selectedFile ? selectedFile.type : 'video/mp4'} />
               Browser Anda tidak mendukung preview video.
             </video>
           )}
@@ -134,9 +122,7 @@ function FileDropzone({ accept, selectedFile, onFileSelect, type, previewUrl, ex
                 <p className="text-sm font-medium text-zinc-800 truncate">
                   {selectedFile ? selectedFile.name : existingValue?.split('/').pop()}
                 </p>
-                {selectedFile && (
-                  <p className="text-xs text-zinc-400">{(selectedFile.size / (1024 * 1024)).toFixed(2)} MB</p>
-                )}
+                {selectedFile && <p className="text-xs text-zinc-400">{(selectedFile.size / (1024 * 1024)).toFixed(2)} MB</p>}
               </div>
             </div>
           )}
@@ -146,37 +132,31 @@ function FileDropzone({ accept, selectedFile, onFileSelect, type, previewUrl, ex
   );
 }
 
-export default function ProjectFieldInput({
-  field,
-  existingValue,
-  onSave
-}: Props) {
+export default function ProjectFieldInput({ field, existingValue, onSave }: Props) {
   const [value, setValue] = useState(existingValue ?? '');
   const [hasSavedValue, setHasSavedValue] = useState(!!existingValue);
   const [loading, setLoading] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  
+
   // PERBAIKAN: State khusus untuk mengamankan transisi visual gambar/video
   const normalizeUrl = (url?: string | null) => {
     if (!url) return '';
     if (url.startsWith('http')) return url;
     if (url.startsWith('/')) return url;
     return `/${url}`;
-};
+  };
 
-    const [previewUrl, setPreviewUrl] = useState<string>(
-        normalizeUrl(existingValue)
-    );
+  const [previewUrl, setPreviewUrl] = useState<string>(normalizeUrl(existingValue));
 
   // Sinkronisasikan state lokal jika data dari database/parent berubah
   useEffect(() => {
-        setValue(existingValue ?? '');
-        setHasSavedValue(!!existingValue);
+    setValue(existingValue ?? '');
+    setHasSavedValue(!!existingValue);
 
-        if (!selectedFile) {
-            setPreviewUrl(normalizeUrl(existingValue));
-        }
-    }, [existingValue, selectedFile]);
+    if (!selectedFile) {
+      setPreviewUrl(normalizeUrl(existingValue));
+    }
+  }, [existingValue, selectedFile]);
 
   // Efek samping untuk membuat Blob URL ketika memilih file baru
   useEffect(() => {
@@ -204,20 +184,23 @@ export default function ProjectFieldInput({
           reader.readAsDataURL(selectedFile);
           reader.onloadend = async () => {
             const base64Data = reader.result as string;
-            
-            await onSave(field.id, JSON.stringify({
-              fileName: selectedFile.name,
-              fileData: base64Data
-            }));
-            
-            // PERBAIKAN: Hapus baris setSelectedFile(null) dari sini! 
-            // Biarkan useEffect di atas yang menyinkronkan state secara alami 
+
+            await onSave(
+              field.id,
+              JSON.stringify({
+                fileName: selectedFile.name,
+                fileData: base64Data
+              })
+            );
+
+            // PERBAIKAN: Hapus baris setSelectedFile(null) dari sini!
+            // Biarkan useEffect di atas yang menyinkronkan state secara alami
             // setelah tRPC mengirimkan payload existingValue yang baru.
-            
+
             setHasSavedValue(true);
             triggerSnackbar();
           };
-          return; 
+          return;
         } else if (existingValue) {
           await onSave(field.id, existingValue);
         }
@@ -225,12 +208,12 @@ export default function ProjectFieldInput({
         await onSave(field.id, value);
         setHasSavedValue(true);
       }
-      
+
       triggerSnackbar();
     } catch (error) {
-      console.error("Gagal menyimpan data:", error);
+      console.error('Gagal menyimpan data:', error);
     } finally {
-      if (!selectedFile) setLoading(false); 
+      if (!selectedFile) setLoading(false);
     }
   };
 
@@ -253,11 +236,7 @@ export default function ProjectFieldInput({
           </Typography>
 
           {field.placeholder && (
-            <Typography
-              variant="body2"
-              color="textSecondary"
-              className="mt-1"
-            >
+            <Typography variant="body2" color="textSecondary" className="mt-1">
               {field.placeholder}
             </Typography>
           )}
@@ -273,33 +252,12 @@ export default function ProjectFieldInput({
 
       <Stack spacing={3}>
         {/* Render Form Dinamis */}
-        {field.type === 'TEXT' && (
-          <TextField
-            fullWidth
-            size="small"
-            value={value}
-            onChange={(e) => setValue(e.target.value)}
-          />
-        )}
+        {field.type === 'TEXT' && <TextField fullWidth size="small" value={value} onChange={(e) => setValue(e.target.value)} />}
 
-        {field.type === 'TEXTAREA' && (
-          <TextField
-            fullWidth
-            multiline
-            rows={4}
-            value={value}
-            onChange={(e) => setValue(e.target.value)}
-          />
-        )}
+        {field.type === 'TEXTAREA' && <TextField fullWidth multiline rows={4} value={value} onChange={(e) => setValue(e.target.value)} />}
 
         {field.type === 'NUMBER' && (
-          <TextField
-            fullWidth
-            size="small"
-            type="number"
-            value={value}
-            onChange={(e) => setValue(e.target.value)}
-          />
+          <TextField fullWidth size="small" type="number" value={value} onChange={(e) => setValue(e.target.value)} />
         )}
 
         {field.type === 'DATE' && (
@@ -314,46 +272,41 @@ export default function ProjectFieldInput({
         )}
 
         {field.type === 'FILE' && (
-          <FileDropzone 
-            accept="*/*" 
-            selectedFile={selectedFile} 
+          <FileDropzone
+            accept="*/*"
+            selectedFile={selectedFile}
             existingValue={existingValue}
             previewUrl={previewUrl}
-            onFileSelect={(file) => setSelectedFile(file)} 
-            type="FILE" 
+            onFileSelect={(file) => setSelectedFile(file)}
+            type="FILE"
           />
         )}
 
         {field.type === 'IMAGE' && (
-          <FileDropzone 
-            accept="image/*" 
-            selectedFile={selectedFile} 
+          <FileDropzone
+            accept="image/*"
+            selectedFile={selectedFile}
             existingValue={existingValue}
             previewUrl={previewUrl}
-            onFileSelect={(file) => setSelectedFile(file)} 
-            type="IMAGE" 
+            onFileSelect={(file) => setSelectedFile(file)}
+            type="IMAGE"
           />
         )}
 
         {field.type === 'VIDEO' && (
-          <FileDropzone 
-            accept="video/*" 
-            selectedFile={selectedFile} 
+          <FileDropzone
+            accept="video/*"
+            selectedFile={selectedFile}
             existingValue={existingValue}
             previewUrl={previewUrl}
-            onFileSelect={(file) => setSelectedFile(file)} 
-            type="VIDEO" 
+            onFileSelect={(file) => setSelectedFile(file)}
+            type="VIDEO"
           />
         )}
 
         {/* Tombol Aksi */}
         <div className="flex justify-start">
-          <Button
-            variant="contained"
-            onClick={handleSave}
-            disabled={loading}
-            className="w-24 capitalize"
-          > 
+          <Button variant="contained" onClick={handleSave} disabled={loading} className="w-24 capitalize">
             {loading ? 'Saving...' : hasSavedValue ? 'Update' : 'Save'}
           </Button>
         </div>
